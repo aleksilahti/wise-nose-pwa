@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, request, url_for, flash
+from flask import Flask, render_template, redirect, request, url_for, flash, session
 import os
 import email_validator
 
@@ -6,7 +6,7 @@ app = Flask("Wise Nose PWA")
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.engine import Engine
 from sqlalchemy import event
-from flask_login import LoginManager, login_user, current_user, logout_user, login_required
+from flask_login import LoginManager, login_user, current_user, logout_user, login_required, UserMixin
 from flask_bcrypt import Bcrypt
 from forms import *
 SECRET_KEY = os.urandom(32)
@@ -16,9 +16,15 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
 login_manager = LoginManager(app)
-login_manager.login_view = 'login'
 
-class User(db.Model):
+@login_manager.user_loader
+def load_user(user_id):
+    user = User.query.get(int(user_id))
+    print("Loaded user: " + str(user))
+    return user
+
+
+class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(256), unique=True, nullable=False)
     email = db.Column(db.String(256), nullable=False)
@@ -60,7 +66,8 @@ db.create_all()
 # Home / Base URL
 @app.route("/")
 @app.route("/home")
-def index():
+def home():
+    print(current_user)
     return render_template('index.html')
 
 
@@ -82,8 +89,18 @@ def login():
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
-    return render_template('register.html')
-
+    if current_user.is_authenticated:
+        return redirect(url_for('home'))
+    form = RegisterForm()
+    if form.validate_on_submit():
+        # Hash the password and insert the user in SQLAlchemy db
+        hashed_pw = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+        user = User(username=form.username.data, email=form.email.data, pw_hash=hashed_pw)
+        db.session.add(user)
+        db.session.commit()
+        flash('Account created: {form.username.data}!', 'success')
+        return redirect(url_for('login'))
+    return render_template('register.html', title='Register', form=form)
 
 # Dog routes
 @app.route("/dogs")
@@ -156,7 +173,7 @@ def sessions():
     return "sessions"
 
 @app.route("/sessions/<int:id>")
-def session(id):
+def session_info(id):
     return "person" + str(id)
 
 @app.route("/sessions/create", methods=["GET", "POST"])
@@ -183,11 +200,6 @@ def modify_session(id):
 @app.route("/sessions/review/<int:id>")
 def review_session(id):
     return "review session" + str(id)
-
-@login_manager.user_loader
-def load_user(user_id):
-    user = User.query.filter_by(id=user_id).first()
-    return user.id
 
 # Toggle debug mode (run as "python3 app.py")
 if __name__ == "__main__":
