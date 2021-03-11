@@ -1,7 +1,7 @@
 import os
 import pytest
 import tempfile
-import app
+import app as app
 
 # import db classes
 from app import User
