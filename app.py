@@ -1,5 +1,6 @@
 from flask import Flask, render_template, redirect, request, url_for, flash
 import os
+import email_validator
 
 app = Flask("Wise Nose PWA")
 from flask_sqlalchemy import SQLAlchemy
@@ -17,8 +18,36 @@ bcrypt = Bcrypt(app)
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
 
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(256), unique=True, nullable=False)
+    email = db.Column(db.String(256), nullable=False)
+    pw_hash = db.Column(db.String(256), nullable=False)
 
+    sessions = db.relationship("Session", back_populates="user")
+    samples = db.relationship("Sample", back_populates="user")
 
+class Session(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id", ondelete="SET NULL"), nullable=True)
+    created = db.Column(db.DateTime, nullable=False)
+    completed = db.Column(db.DateTime, nullable=True)
+    result = db.Column(db.String(256), nullable=True)
+    number_of_samples = db.Column(db.Integer, nullable=False)
+
+    user = db.relationship("User", back_populates="sessions")
+    samples = db.relationship("Sample", back_populates="session")
+
+class Sample(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    added_by = db.Column(db.Integer, db.ForeignKey("user.id", ondelete="SET NULL"), nullable=True)
+    is_correct = db.Column(db.Integer, nullable=False)  # Boolean value 1 or 0
+    session_id = db.Column(db.Integer, db.ForeignKey("session.id", ondelete="SET NULL"), nullable=True)
+    number_in_session = db.Column(db.Integer, nullable=True)
+    dog_answer = db.Column(db.String(144), nullable=True)
+
+    session = db.relationship("Session", back_populates="samples")
+    user = db.relationship("User", back_populates="samples")
 
 @event.listens_for(Engine, "connect")
 def set_sqlite_pragma(dbapi_connection, connection_record):
@@ -43,12 +72,12 @@ def login():
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter_by(username=form.username.data).first()
-        if user and (user.pw_hash == form.password.data):  # bcrypt.check_password_hash(user.pw_hash, form.password.data):
+        if user and bcrypt.check_password_hash(user.pw_hash, form.password.data):
             login_user(user, remember=form.remember.data)
             session["user"] = user.id
             return redirect(url_for('home'))
         else:
-            flash('Login Failed. Please Check Username and Password', 'danger')
+            flash('Login Failed. Please Check Username and Password', 'error')
     return render_template('login.html', title='Login', form=form)
 
 @app.route("/register", methods=["GET", "POST"])
@@ -164,36 +193,6 @@ def load_user(user_id):
 if __name__ == "__main__":
     app.run(debug=True)
 
-class User(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(256), unique=True, nullable=False)
-    email = db.Column(db.String(256), nullable=False)
-    pw_hash = db.Column(db.String(256), nullable=False)
-
-    sessions = db.relationship("Session", back_populates="user")
-    samples = db.relationship("Sample", back_populates="user")
-
-class Session(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey("user.id", ondelete="SET NULL"), nullable=True)
-    created = db.Column(db.DateTime, nullable=False)
-    completed = db.Column(db.DateTime, nullable=True)
-    result = db.Column(db.String(256), nullable=True)
-    number_of_samples = db.Column(db.Integer, nullable=False)
-
-    user = db.relationship("User", back_populates="sessions")
-    samples = db.relationship("Sample", back_populates="session")
-
-class Sample(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    added_by = db.Column(db.Integer, db.ForeignKey("user.id", ondelete="SET NULL"), nullable=True)
-    is_correct = db.Column(db.Integer, nullable=False)  # Boolean value 1 or 0
-    session_id = db.Column(db.Integer, db.ForeignKey("session.id", ondelete="SET NULL"), nullable=True)
-    number_in_session = db.Column(db.Integer, nullable=True)
-    dog_answer = db.Column(db.String(144), nullable=True)
-
-    session = db.relationship("Session", back_populates="samples")
-    user = db.relationship("User", back_populates="samples")
 
 
 
