@@ -201,6 +201,11 @@ def modify_session(id):
 def review_session(id):
     return "review session" + str(id)
 
+# PWA 
+@app.route('/service-worker.js')
+def sw():
+    return app.send_static_file('service-worker.js')
+
 # Toggle debug mode (run as "python3 app.py")
 if __name__ == "__main__":
     app.run(debug=True)
