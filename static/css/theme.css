@@ -1,0 +1,99 @@
+.bg-deep-blue{
+    background-color: #264653;
+}
+
+body{
+    /* prevent the navbar to overlap the content */
+    min-height: 75rem;
+    padding-top: 4.5rem;
+}
+
+.navbar-collapse.collapse.show {
+    background-color: white;
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 55vw;
+    z-index: 2000;
+}
+
+.navbar-collapse.collapsing {
+    background-color: white;
+    position: fixed;
+    top: 0;
+    left: -55vw;
+    height: 100vh;
+    width: 55vw;
+    z-index: 2000;
+    -webkit-transition: left 0.3s ease;
+    -moz-transition: left 0.3s ease;
+    -o-transition: left 0.3s ease;
+    transition: left 0.3s ease;
+}
+
+.navbar-collapse.collapse {
+    -webkit-transition: left 0.3s ease;
+    -moz-transition: left 0.3s ease;
+    -o-transition: left 0.3s ease;
+    transition: left 0.3s ease;
+}
+
+.navbar-dark .navbar-collapse.collapse.show .navbar-nav a.nav-link {
+    color: #404040;
+}
+
+.navbar-dark .navbar-collapse.collapse.show .navbar-nav li.active{
+    background-color: rgba(196, 196, 196, 0.45);
+    border-radius: 4px;
+}
+
+.navbar-dark .navbar-collapse.collapse.show .navbar-nav li{
+    margin: 1rem 1rem 0 1rem ;
+}
+
+.navbar-dark .navbar-collapse.collapse.show .navbar-nav li a.nav-link{
+    padding-left: 4rem;
+}
+
+.navbar-dark .navbar-collapse.collapse.show .navbar-nav li.active a.nav-link{
+    color: #404040;
+}
+
+.navbar-collapse.show h2{
+    display: block;
+    font-weight: bold;
+    margin: 1rem 0 2rem 1rem;
+}
+
+.navbar-collapse h2{
+    display: none;
+}
+
+
+.mask{
+    position:fixed;
+    z-index:3;
+    top:0px;
+    left:0px;
+    height:100%;
+    width:100%;
+    cursor:pointer;
+    background-color: rgb(38, 70, 83, 0.45);
+    border-color: transparent !important;
+
+}
+
+.navbar-toggler{
+    -webkit-transition: background 0.1s ease;
+    -moz-transition: background 0.1s ease;
+    -o-transition: background 0.1s ease;
+    transition: background 0.1s ease;
+    border-color: transparent !important;
+}
+
+
+.mask .navbar-toggler-icon{
+    display: none;
+}
+

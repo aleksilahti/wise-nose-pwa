@@ -209,8 +209,3 @@ def sw():
 # Toggle debug mode (run as "python3 app.py")
 if __name__ == "__main__":
     app.run(debug=True)
-
-
-
-
-
