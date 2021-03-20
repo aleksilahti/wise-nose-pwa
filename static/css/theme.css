@@ -52,9 +52,6 @@ body{
     margin: 1rem 1rem 0 1rem ;
 }
 
-.navbar-dark .navbar-collapse.collapse.show .navbar-nav li a.nav-link{
-    padding-left: 4rem;
-}
 
 .navbar-dark .navbar-collapse.collapse.show .navbar-nav li.active a.nav-link{
     color: #404040;
@@ -68,6 +65,16 @@ body{
 
 .navbar-collapse h2{
     display: none;
+}
+
+.navbar-collapse i {
+    display: none;
+}
+
+.navbar-collapse.show i {
+    display: inline-block;
+    padding-left: 1rem;
+    padding-right: 1rem;
 }
 
 
@@ -97,3 +104,13 @@ body{
     display: none;
 }
 
+.navbar-collapse hr {
+    display: none;
+}
+
+.navbar-collapse.show hr {
+    display: block;
+    margin-top: 2rem;
+    border-top: 0.005rem solid #264653;
+    width: 55vw;
+}

@@ -71,7 +71,7 @@ def home():
     return render_template('index.html')
 
 
-# Login / Register
+# Login / Register / Logout
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if current_user.is_authenticated:
@@ -101,6 +101,12 @@ def register():
         flash('Account created: {form.username.data}!', 'success')
         return redirect(url_for('login'))
     return render_template('register.html', title='Register', form=form)
+
+@app.route("/logout", methods=["GET"])
+def logout():
+    if current_user.is_authenticated:
+        logout_user()
+    return redirect(url_for('home'))
 
 # Dog routes
 @app.route("/dogs")
