@@ -8,6 +8,8 @@ body{
     padding-top: 4.5rem;
 }
 
+/*** Side-menu panel ***/
+
 .navbar-collapse.collapse.show {
     background-color: white;
     position: fixed;
@@ -38,6 +40,8 @@ body{
     -o-transition: left 0.3s ease;
     transition: left 0.3s ease;
 }
+
+/*** Side-menu links ***/
 
 .navbar-dark .navbar-collapse.collapse.show .navbar-nav a.nav-link {
     color: #404040;
@@ -77,6 +81,18 @@ body{
     padding-right: 1rem;
 }
 
+.navbar-collapse hr {
+    display: none;
+}
+
+.navbar-collapse.show hr {
+    display: block;
+    margin-top: 2rem;
+    border-top: 0.005rem solid #264653;
+    width: 55vw;
+}
+
+/*** Side-menu toggler and mask ***/
 
 .mask{
     position:fixed;
@@ -104,13 +120,97 @@ body{
     display: none;
 }
 
-.navbar-collapse hr {
+/*** dogs square ***/
+
+.dog-container-content .card-body{
+    display: flex;
+    justify-content: center;
+}
+
+.dog-container-content .card-title{
+    margin-bottom: 0;
+}
+
+.dog-container-content{
+    background-color: rgba(87,151,178,0.35);
+}
+
+.dog-container.expanded{
+    flex: 0 0 100%;
+    max-width: 100%;
+}
+
+
+@media (min-width: 768px){
+    .dog-container.expanded img{
+        position: relative;
+        bottom: 0;
+        left: 0;
+        width: 33%;
+        height: 100%;
+        border-bottom-left-radius: calc(.25rem - 1px);
+        border-top-right-radius: 0;
+    }
+}
+
+/* 
+On small device, the doesn't take the full height if we impose a width or is distorted if we doesn't impose a height 
+So different display format
+*/
+.dog-container.expanded img{
+    position: relative;
+    bottom: 0;
+    left: 0;
+    height: 100%;
+    border-bottom-left-radius: calc(.25rem - 1px);
+    border-top-right-radius: 0;
+}
+
+.dog-container.expanded .card-body{
+    position: relative;
+    top: 0;
+    width: 67%;
+}
+
+.dog-container .card-body p{
+    margin-top: 1rem;
     display: none;
 }
 
-.navbar-collapse.show hr {
+.dog-container.expanded .card-body .col> *{
+    position: relative;
     display: block;
-    margin-top: 2rem;
-    border-top: 0.005rem solid #264653;
-    width: 55vw;
+    top: 0;
+    left: 0;
+    width: 100%;
+    text-align: left;
+}
+
+.dog-container .card-body .col> *{
+    text-align: center;
+}
+
+.dog-container{
+    -webkit-transition: flex 0.1s ease;
+    -moz-transition: flex 0.1s ease;
+    -o-transition: flex 0.1s ease;
+    transition: flex 0.1s ease;
+}
+
+/*** FAB ***/
+
+.fab-material{
+    display: flex;
+    justify-content: center;
+    position: fixed;
+    color: white;
+    bottom: 1rem;
+    right: 1rem;
+    border-radius: 50%;
+    width: 5rem;
+    height: 5rem;
+}
+
+.fab-material i{
+    align-self: center;
 }

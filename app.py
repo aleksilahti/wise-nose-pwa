@@ -111,7 +111,7 @@ def logout():
 # Dog routes
 @app.route("/dogs")
 def dogs():
-    return "dogs"
+    return render_template("dogs.html")
 
 @app.route("/dogs/<int:id>")
 def dog(id):

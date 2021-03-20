@@ -48,18 +48,19 @@
             </li>
           {% endif %}
           <hr>
-          <li class="nav-item">
-            <a class="nav-link" href="/login"><i class="fas fa-sign-in-alt fa-lg"></i>Login</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="/register"><i class="fas fa-registered fa-lg"></i>Register</a>
-          </li>
           {% if current_user.is_authenticated %}
             <li class="nav-item">
               <a class="nav-link" href="/export"><i class="fas fa-file-download fa-lg"></i>Export</a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="/logout"><i class="fas fa-sign-out-alt fa-lg"></i>Logout</a>
+            </li>
+          {% else %}
+            <li class="nav-item">
+              <a class="nav-link" href="/login"><i class="fas fa-sign-in-alt fa-lg"></i>Login</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/register"><i class="fas fa-registered fa-lg"></i>Register</a>
             </li>
           {% endif %}
         </ul>
