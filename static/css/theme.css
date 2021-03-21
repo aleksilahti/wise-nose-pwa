@@ -2,6 +2,18 @@
     background-color: #264653;
 }
 
+.bg-light-blue{
+    background-color: rgba(87,151,178,0.35);
+}
+
+.bg-dark-blue{
+    background-color: #5797B2;
+}
+
+.bg-contrast-blue{
+    background-color: rgba(40,69,81,0.35);
+}
+
 body{
     /* prevent the navbar to overlap the content */
     min-height: 75rem;
@@ -170,6 +182,16 @@ So different display format
     position: relative;
     top: 0;
     width: 67%;
+    background-color: #5797B2;
+    color: white;
+}
+
+.dog-container.expanded .card-body .col:nth-child(2){
+    display: block;
+}
+
+.card-body .col:nth-child(2){
+    display: none;
 }
 
 .dog-container .card-body p{
@@ -177,7 +199,12 @@ So different display format
     display: none;
 }
 
-.dog-container.expanded .card-body .col> *{
+.dog-container .card-body p.card-text{
+    font-size: 1.04rem;
+}
+
+
+.dog-container.expanded .card-body .col> *:not(div){
     position: relative;
     display: block;
     top: 0;
@@ -186,7 +213,7 @@ So different display format
     text-align: left;
 }
 
-.dog-container .card-body .col> *{
+.dog-container .card-body .col> *:not(div){
     text-align: center;
 }
 
@@ -212,5 +239,27 @@ So different display format
 }
 
 .fab-material i{
+    align-self: center;
+}
+
+/** circle action button **/
+
+.action-buttons{
+    position: absolute;
+    bottom: 0rem;
+    right: 1rem;
+}
+
+.action-button{
+    display: flex;
+    margin: 0.25rem;
+    justify-content: center;
+    color: white;
+    border-radius: 50%;
+    width: 3rem;
+    height: 3rem;
+}
+
+.action-button i{
     align-self: center;
 }

@@ -7,11 +7,13 @@ $(".navbar-toggler").on("click", function () {
 $('a[href$="'+url_path+'"]').parent().addClass("active")
 
 //clicked dog container
-$(".dog-container").on("click", function(){
-     if($(this).hasClass("expanded")){
-          $(this).removeClass("expanded")
-     }else{
-          $(".expanded").removeClass("expanded")
-          $(this).addClass("expanded")
+$(".dog-container").on("click", function(e){
+     if($(e.target).hasClass("btn") == false && $(e.target).hasClass("fas") == false){ // prevent the click to be executed on the button inside dog cards
+          if($(this).hasClass("expanded")){
+               $(this).removeClass("expanded")
+          }else{
+               $(".expanded").removeClass("expanded")
+               $(this).addClass("expanded")
+          }
      }
 })
