@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<title>Wise Nose | Members</title>
+{% endblock %}
+
+{% block body %}
+<div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 align-items-stretch">
+    <div class="col mb-4 member-container">
+        <div class="card">
+            <img src="{{ url_for('static', filename='images/member_try.jpg') }}" class="card-img-top" alt="...">
+            <div class="card-body">
+                {# <h5 class="card-title">Card title</h5> #}
+                <div class="action-buttons-members">
+                    <button type="button" class="btn action-button bg-contrast-white"><i class="fas fa-pen fa-lg"></i></button>
+                    <button type"button" class="btn action-button bg-contrast-white" data-toggle="modal" data-target="#staticBackdrop"><i class="fas fa-trash fa-lg"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="staticBackdrop" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="staticBackdropLabel">Delete this dog ?</h5>
+            </button>
+        </div>
+        <div class="modal-body">
+            Are you sure you want to delete it?
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+            <button type="button" class="btn btn-primary">Yes</button>
+        </div>
+        </div>
+    </div>
+</div>
+<div class="fab-material bg-deep-blue"><i class="fas fa-plus fa-lg"></i></div>
+{% endblock %}

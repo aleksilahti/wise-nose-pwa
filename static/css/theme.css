@@ -14,6 +14,11 @@
     background-color: rgba(40,69,81,0.35);
 }
 
+.bg-contrast-white{
+    background-color: rgba(255,255,255,0.45);
+
+}
+
 body{
     /* prevent the navbar to overlap the content */
     min-height: 75rem;
@@ -190,7 +195,7 @@ So different display format
     display: block;
 }
 
-.card-body .col:nth-child(2){
+.dog-container .card-body .col:nth-child(2){
     display: none;
 }
 
@@ -244,10 +249,14 @@ So different display format
 
 /** circle action button **/
 
-.action-buttons{
+.action-buttons-dogs{
     position: absolute;
-    bottom: 0rem;
+    bottom: 0;
     right: 1rem;
+}
+.action-buttons-members{
+    position: absolute;
+    top: 0;
 }
 
 .action-button{
@@ -262,4 +271,46 @@ So different display format
 
 .action-button i{
     align-self: center;
+}
+
+/*** members square ***/
+
+.member-container .card:hover .card-body{
+    height: 100%;
+}
+
+.member-container .card:hover .card-title{
+    position: absolute;
+    bottom: 0;
+    justify-self: center;
+    padding: 0.5rem;
+}
+
+.member-container .card img{
+    border-bottom-left-radius: calc(.25rem - 1px);
+    border-bottom-right-radius: calc(.25rem - 1px);
+}
+
+.member-container .card:hover .action-buttons-members{
+    display: block;
+}
+
+.member-container .card .action-buttons-members{
+    display: block;
+}
+
+.member-container .card-body {
+    display: flex;
+    justify-content: center;
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    padding: 0.5rem;
+    color: white;
+    background-color: rgba(0,0,0,0.7);
+    border-radius: 0.25rem 0.25rem calc(.25rem - 1px) calc(.25rem - 1px);
+}
+
+.member-container .card-title{
+    margin-bottom: 0;
 }

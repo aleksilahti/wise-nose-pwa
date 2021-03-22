@@ -132,7 +132,7 @@ def delete_dog(id):
 # Person routes
 @app.route("/persons")
 def persons():
-    return "people"
+    return render_template("members.html")
 
 @app.route("/persons/<int:id>")
 def person(id):
