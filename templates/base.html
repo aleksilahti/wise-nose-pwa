@@ -35,32 +35,43 @@
           </li>
           {% if current_user.is_authenticated %}
             <li class="nav-item">
-              <a class="nav-link" href="/account"><i class="fas fa-user-circle fa-lg"></i>Account</a>
+              <a class="nav-link" href="{{ url_for('account') }}"><i class="fas fa-user-circle fa-lg"></i>Account</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="/dogs"><i class="fas fa-dog fa-lg"></i>Dogs</a>
+              <a class="nav-link" href="{{ url_for('dogs') }}"><i class="fas fa-dog fa-lg"></i>Dogs</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="/persons"><i class="fas fa-users fa-lg"></i>Members</a>
+              <a class="nav-link" href="{{ url_for('persons') }}"><i class="fas fa-users fa-lg"></i>Members</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="/sessions"><i class="fas fa-clipboard-list fa-lg"></i>Sessions</a>
+              <a class="nav-link" href="{{ url_for('sessions') }}"><i class="fas fa-clipboard-list fa-lg"></i>Sessions</a>
             </li>
           {% endif %}
           <hr>
+           {% if current_user.admin %}
+        <li class="nav-item active">
+          <a class="nav-link" href="{{ url_for('users') }}">Users <span class="sr-only">(current)</span></a>
+        </li>
+          <li class="nav-item active">
+          <a class="nav-link" href="{{ url_for('access_requests') }}">Access requests <span class="sr-only">(current)</span></a>
+        </li>
+          <li class="nav-item active">
+          <a class="nav-link" href="{{ url_for('register') }}">Register <span class="sr-only">(current)</span></a>
+        </li>
+          {% endif %}
           {% if current_user.is_authenticated %}
             <li class="nav-item">
-              <a class="nav-link" href="/export"><i class="fas fa-file-download fa-lg"></i>Export</a>
+              <a class="nav-link" href="{{ url_for('export') }}"><i class="fas fa-file-download fa-lg"></i>Export</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="/logout"><i class="fas fa-sign-out-alt fa-lg"></i>Logout</a>
+              <a class="nav-link" href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt fa-lg"></i>Logout</a>
             </li>
           {% else %}
             <li class="nav-item">
-              <a class="nav-link" href="/login"><i class="fas fa-sign-in-alt fa-lg"></i>Login</a>
+              <a class="nav-link" href="{{ url_for('login') }}"><i class="fas fa-sign-in-alt fa-lg"></i>Login</a>
             </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/register"><i class="fas fa-registered fa-lg"></i>Register</a>
+            <li class="nav-item active">
+            <a class="nav-link" href="{{ url_for('contact') }}"> Contact <span class="sr-only">(current)</span></a>
             </li>
           {% endif %}
         </ul>

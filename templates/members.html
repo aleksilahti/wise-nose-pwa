@@ -1,0 +1,34 @@
+
+{% extends 'base.html' %}
+
+{% block head %}
+{% endblock %}
+
+{% block body %}
+<div class="container">
+    <h2 class="page-header">Members</h2>
+    <table class="table">
+      <thead>
+        <th scope="col">Full name</th>
+        <th scope="col">Role</th>
+        <th scope="col">Wise Nose ID</th>
+        <th scope="col">Actions</th>
+      </thead>
+      <tbody id="members-table">
+      {% for member in members %}
+        <tr>
+          <th scope="col">{{ member.name }}</th>
+          <th scope="col">{{ member.role }}</th>
+          <th scope="col">{{ member.wise_nose_id }}</th>
+          {% if current_user.admin %}
+            <th scope="col">
+            <a type="button" href="{{ url_for('delete_person', person_id=member.id) }}" class="btn btn-danger">Delete</a>
+            <a type="button" href="{{ url_for('modify_person', person_id=member.id) }}" class="btn btn-secondary">Modify</a>
+          </th>
+            {% endif %}
+        </tr>
+    {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endblock %}
