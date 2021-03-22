@@ -274,7 +274,7 @@ So different display format
 }
 .action-buttons-members{
     position: absolute;
-    top: 0;
+    align-self: center;
 }
 
 .action-button{
@@ -295,6 +295,7 @@ So different display format
 
 .member-container .card:hover .card-body{
     height: 100%;
+    text-align: center;
 }
 
 .member-container .card:hover .card-title{
@@ -310,19 +311,20 @@ So different display format
 }
 
 .member-container .card:hover .action-buttons-members{
-    display: block;
+    display: flex;
 }
 
 .member-container .card .action-buttons-members{
-    display: block;
+    display: none;
 }
 
 .member-container .card-body {
     display: flex;
     justify-content: center;
     position: absolute;
-    height: 100%;
+    height: auto;
     width: 100%;
+    bottom: 0;
     padding: 0.5rem;
     color: white;
     background-color: rgba(0,0,0,0.7);
@@ -330,5 +332,22 @@ So different display format
 }
 
 .member-container .card-title{
+    position: absolute;
+    top: 0;
     margin-bottom: 0;
 }
+
+.member-container p.card-text{
+    margin-bottom: 0;
+}
+
+.member-container .row.content{
+    display: flex;
+    width: 100%;
+    position: absolute;
+    justify-content: center;
+    margin-bottom: 0;
+    bottom: 0;
+    font-size: 0.75rem;
+}
+
