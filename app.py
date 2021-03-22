@@ -9,7 +9,6 @@ from sqlalchemy import event
 from sqlalchemy.exc import IntegrityError
 from flask_login import LoginManager, login_user, current_user, logout_user, login_required, UserMixin
 from flask_bcrypt import Bcrypt
-from forms import *
 SECRET_KEY = os.urandom(32)
 app.config['SECRET_KEY'] = SECRET_KEY
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///test.db"
@@ -96,13 +95,15 @@ def set_sqlite_pragma(dbapi_connection, connection_record):
     cursor.close()
 
 db.create_all()
+from forms import * # because in form we import User... so we need them to be initialize before
 
 # Create default user (admin). Remove from use on deployment!
 try:
-    hashed_pw = bcrypt.generate_password_hash("admin").decode('utf-8')
-    default_user = User(username='admin',email='test@email.com',pw_hash=hashed_pw,admin=True)
-    db.session.add(default_user)
-    db.session.commit()
+    if not User.query.filter_by(username="admin"):
+        hashed_pw = bcrypt.generate_password_hash("admin").decode('utf-8')
+        default_user = User(username='admin',email='test@email.com',pw_hash=hashed_pw,admin=True)
+        db.session.add(default_user)
+        db.session.commit()
 except IntegrityError:
     pass
 
@@ -155,7 +156,10 @@ def logout():
 # Dog routes
 @app.route("/dogs")
 def dogs():
-    return render_template("dogs.html")
+    if current_user.is_authenticated:
+        dogs = Dog.query.all()
+        return render_template('dogs.html', dogs=dogs)
+    return redirect(url_for('login'))
 
 @app.route("/dogs/<int:id>")
 def dog(id):
