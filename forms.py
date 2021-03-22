@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms.validators import DataRequired, Email, EqualTo, ValidationError, Length
-from wtforms import StringField, SubmitField, PasswordField, BooleanField
-from app import User
+from wtforms import StringField, SubmitField, PasswordField, BooleanField, RadioField
+from app import User, Person, Session, Sample
 
 class LoginForm(FlaskForm):
 	username = StringField('Username', validators=[DataRequired()])
@@ -33,7 +33,7 @@ class ContactForm(FlaskForm):
     username = StringField('Requested username', validators=[DataRequired(), Length(min=4, max=20)])
     email = StringField('Email', validators=[DataRequired(), Email()])
     organization = StringField('Organization', validators=[DataRequired(), Length(min=1, max=100)])
-    message = StringField('Message', validators=[DataRequired(), Length(min=1, max=255)])
+    message = StringField('Message', validators=[Length(min=0, max=255)])
 
     submit = SubmitField('Request access')
 
@@ -52,3 +52,9 @@ class PwForm(FlaskForm):
     confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password')])
 
     submit = SubmitField('Change password')
+
+class MemberForm(FlaskForm):
+    name = StringField('Full name', validators=[Length(min=1, max=100)])
+    role = RadioField('Member Role', coerce=int, default=1, choices=[(1,'Trainer'),(2,'Supervisor'), (3,'Trainer/Supervisor')])
+    wise_nose_id = StringField('Wise Nose ID', validators=[Length(min=0, max=100)])
+    submit = SubmitField('Add member')

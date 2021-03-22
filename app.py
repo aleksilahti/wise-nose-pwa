@@ -36,16 +36,39 @@ class User(db.Model, UserMixin):
     sessions = db.relationship("Session", back_populates="user")
     samples = db.relationship("Sample", back_populates="user")
 
+class Person(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(128), nullable=True)
+    wise_nose_id = db.Column(db.String(128), nullable=True)
+    role = db.Column(db.Integer, nullable=True)
+
+    sessions = db.relationship("Session", back_populates="supervisor")
+    dogs = db.relationship("Dog", back_populates="trainer")
+
+class Dog(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    trainer_id = db.Column(db.Integer, db.ForeignKey("person.id", ondelete="SET NULL"), nullable=True)
+    name = db.Column(db.String(128), nullable=True)
+    wise_nose_id = db.Column(db.String(128), nullable=True)
+    age = db.Column(db.Integer, nullable=True)
+
+    sessions = db.relationship("Session", back_populates="dog")
+    trainer = db.relationship("Person", back_populates="dogs")
+
 class Session(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey("user.id", ondelete="SET NULL"), nullable=True)
+    supervisor_id = db.Column(db.Integer, db.ForeignKey("person.id", ondelete="SET NULL"), nullable=True)
+    dog_id = db.Column(db.Integer, db.ForeignKey("dog.id", ondelete="SET NULL"), nullable=True)
     created = db.Column(db.DateTime, nullable=False)
     completed = db.Column(db.DateTime, nullable=True)
     result = db.Column(db.String(256), nullable=True)
     number_of_samples = db.Column(db.Integer, nullable=False)
 
+    dog = db.relationship("Dog", back_populates="sessions")
     user = db.relationship("User", back_populates="sessions")
     samples = db.relationship("Sample", back_populates="session")
+    supervisor = db.relationship("Person", back_populates="sessions")
 
 class Sample(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -150,26 +173,50 @@ def edit_dog(id):
 def delete_dog(id):
     return "delete person" + str(id)
 
-# Person routes
-@app.route("/persons")
-def persons():
+# Member routes
+@app.route("/members")
+def members():
+    if current_user.is_authenticated:
+        members = Person.query.all()
+        return render_template('members.html', members=members)
     return redirect(url_for('login'))
 
-@app.route("/persons/<int:id>")
-def person(id):
-    return "person" + str(id)
+@app.route("/members/<int:id>")
+def member(id):
+    return 'member' + str(id)
 
 @app.route("/persons/add", methods=["GET", "POST"])
-def add_person():
-    return "add person"
+def add_member():
+    if not current_user.is_authenticated:
+        return redirect(url_for('home'))
+    form = MemberForm()
+    if form.validate_on_submit():
+        person = Person(name=form.name.data, role=form.role.data, wise_nose_id=form.wise_nose_id.data)
+        db.session.add(person)
+        db.session.commit()
+        flash('Member created!', 'success')
+        return redirect(url_for('members'))
+    return render_template('newmember.html', form=form)
 
 @app.route("/persons/edit/<int:id>", methods=["GET", "POST"])
-def edit_person(id):
+def edit_member(id):
     return "edit person" + str(id)
 
-@app.route("/persons/delete/<int:id>", methods=["GET", "POST"])
-def delete_person(id):
-    return "delete person" + str(id)
+@app.route("/members/delete/<int:id>", methods=["GET", "POST"])
+def delete_member(id):
+    if current_user.is_authenticated:
+        if current_user.admin:
+            try:
+                person = Person.query.filter_by(id=id).first()
+                db.session.delete(person)
+                db.session.commit()
+                flash('Member deleted', 'success')
+                return redirect(url_for('members'))
+            except:
+                flash('Action failed', 'danger')
+        flash('You lack the credentials to access this endpoint!', 'danger')
+        return redirect(url_for('home'))
+    return redirect(url_for('login'))
 
 
 # Sample routes
@@ -248,7 +295,7 @@ def users():
             users = User.query.all()
             return render_template('users.html', users=users)
         flash('You need admin privileges to access this page!', 'danger')
-        return redirect(url_for('slices'))
+        return redirect(url_for('home'))
     return redirect(url_for('login'))
 
 @app.route("/accessrequests")
