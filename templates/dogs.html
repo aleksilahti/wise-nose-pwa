@@ -6,191 +6,57 @@
 
 {% block body %}
 <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 align-items-stretch">
-    <div class="col mb-4 dog-container">
-        <div class="card dog-container-content">
-            <div class="row no-gutters">
-                <img src="{{ url_for('static', filename='images/dog_try.jpg') }}" class="card-img-top" alt="...">
-                <div class="card-body">
-                    <div class="col">
-                        <p><u>Name:</u><p>
-                        <h5 class="card-title">Card title</h5>
-                        <p><u>Age:</u><p>
-                        <p class="card-text">5</p>
-                    </div>
-                    <div class="col">
-                        <p><u>Trainer:</u><p>
-                        <p class="card-text">Paula Laakso</p>
-                        <div class="row action-buttons">
-                            <button type="button" class="btn action-button bg-contrast-blue"><i class="fas fa-pen fa-lg"></i></button>
-                            <button type"button" class="btn action-button bg-contrast-blue" data-toggle="modal" data-target="#staticBackdrop"><i class="fas fa-trash fa-lg"></i></button>
+    {% for dog in dogs %}
+        <div class="col mb-4 dog-container">
+            <div class="card dog-container-content">
+                <div class="row no-gutters">
+                    <img src="{{ url_for('static', filename='images/dog_try.jpg') }}" class="card-img-top" alt="...">
+                    <div class="card-body">
+                        <div class="col">
+                            <p><u>Name:</u><p>
+                            <h5 class="card-title">{{ dog.name }}</h5>
+                            <p><u>Age:</u><p>
+                            <p class="card-text">{{ dog.age }}</p>
+                        </div>
+                        <div class="col">
+                            <p><u>Trainer:</u><p>
+                            <p class="card-text">{{dog.trainer_id}}</p>
+                            <p><u>Wise Nose ID:</u><p>
+                            <p class="card-text">{{ dog.wise_nose_id }}</p>
+                            {% if current_user.admin %}
+                                <div class="row action-buttons-dogs">
+                                    <a href="{{ url_for('edit_dog', id=dog.id) }}" class="btn action-button bg-contrast-blue"><i class="fas fa-pen fa-lg"></i></a>
+                                    <button type"button" class="btn action-button bg-contrast-blue" data-toggle="modal" data-target="#staticBackdrop{{dog.id}}"><i class="fas fa-trash fa-lg"></i></button>
+                                </div>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
-    <div class="col mb-4 dog-container">
-        <div class="card dog-container-content">
-            <div class="row no-gutters">
-                <img src="{{ url_for('static', filename='images/dog_try.jpg') }}" class="card-img-top" alt="...">
-                <div class="card-body">
-                    <div class="col">
-                        <p><u>Name:</u><p>
-                        <h5 class="card-title">Card title</h5>
-                        <p><u>Age:</u><p>
-                        <p class="card-text">5</p>
-                    </div>
-                    <div class="col">
-                        <p><u>Trainer:</u><p>
-                        <p class="card-text">Paula Laakso</p>
-                        <div class="row action-buttons">
-                            <button type="button" class="btn action-button bg-contrast-blue"><i class="fas fa-pen fa-lg"></i></button>
-                            <button type"button" class="btn action-button bg-contrast-blue" data-toggle="modal" data-target="#staticBackdrop"><i class="fas fa-trash fa-lg"></i></button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="col mb-4 dog-container">
-        <div class="card dog-container-content">
-            <div class="row no-gutters">
-                <img src="{{ url_for('static', filename='images/dog_try.jpg') }}" class="card-img-top" alt="...">
-                <div class="card-body">
-                    <div class="col">
-                        <p><u>Name:</u><p>
-                        <h5 class="card-title">Card title</h5>
-                        <p><u>Age:</u><p>
-                        <p class="card-text">5</p>
-                    </div>
-                    <div class="col">
-                        <p><u>Trainer:</u><p>
-                        <p class="card-text">Paula Laakso</p>
-                        <div class="row action-buttons">
-                            <button type="button" class="btn action-button bg-contrast-blue"><i class="fas fa-pen fa-lg"></i></button>
-                            <button type"button" class="btn action-button bg-contrast-blue" data-toggle="modal" data-target="#staticBackdrop"><i class="fas fa-trash fa-lg"></i></button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="col mb-4 dog-container">
-        <div class="card dog-container-content">
-            <div class="row no-gutters">
-                <img src="{{ url_for('static', filename='images/dog_try.jpg') }}" class="card-img-top" alt="...">
-                <div class="card-body">
-                    <div class="col">
-                        <p><u>Name:</u><p>
-                        <h5 class="card-title">Card title</h5>
-                        <p><u>Age:</u><p>
-                        <p class="card-text">5</p>
-                    </div>
-                    <div class="col">
-                        <p><u>Trainer:</u><p>
-                        <p class="card-text">Paula Laakso</p>
-                        <div class="row action-buttons">
-                            <button type="button" class="btn action-button bg-contrast-blue"><i class="fas fa-pen fa-lg"></i></button>
-                            <button type"button" class="btn action-button bg-contrast-blue" data-toggle="modal" data-target="#staticBackdrop"><i class="fas fa-trash fa-lg"></i></button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="col mb-4 dog-container">
-        <div class="card dog-container-content">
-            <div class="row no-gutters">
-                <img src="{{ url_for('static', filename='images/dog_try.jpg') }}" class="card-img-top" alt="...">
-                <div class="card-body">
-                    <div class="col">
-                        <p><u>Name:</u><p>
-                        <h5 class="card-title">Card title</h5>
-                        <p><u>Age:</u><p>
-                        <p class="card-text">5</p>
-                    </div>
-                    <div class="col">
-                        <p><u>Trainer:</u><p>
-                        <p class="card-text">Paula Laakso</p>
-                        <div class="row action-buttons-dogs">
-                            <button type="button" class="btn action-button bg-contrast-blue"><i class="fas fa-pen fa-lg"></i></button>
-                            <button type"button" class="btn action-button bg-contrast-blue" data-toggle="modal" data-target="#staticBackdrop"><i class="fas fa-trash fa-lg"></i></button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="col mb-4 dog-container">
-        <div class="card dog-container-content">
-            <div class="row no-gutters">
-                <img src="{{ url_for('static', filename='images/dog_try.jpg') }}" class="card-img-top" alt="...">
-                <div class="card-body">
-                    <div class="col">
-                        <p><u>Name:</u><p>
-                        <h5 class="card-title">Card title</h5>
-                        <p><u>Age:</u><p>
-                        <p class="card-text">5</p>
-                    </div>
-                    <div class="col">
-                        <p><u>Trainer:</u><p>
-                        <p class="card-text">Paula Laakso</p>
-                        <div class="row action-buttons">
-                            <button type="button" class="btn action-button bg-contrast-blue"><i class="fas fa-pen fa-lg"></i></button>
-                            <button type"button" class="btn action-button bg-contrast-blue" data-toggle="modal" data-target="#staticBackdrop"><i class="fas fa-trash fa-lg"></i></button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-<div class="modal fade" id="staticBackdrop" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-        <div class="modal-header">
-            <h5 class="modal-title" id="staticBackdropLabel">Delete this dog ?</h5>
-            </button>
-        </div>
-        <div class="modal-body">
-            Are you sure you want to delete it?
-        </div>
-        <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
-            <button type="button" class="btn btn-primary">Yes</button>
-        </div>
-        </div>
-    </div>
-</div>
-<div class="fab-material bg-deep-blue"><i class="fas fa-plus fa-lg"></i></div>
-
-<!-- Functionality demonstration -->
-<div class="container">
-    <h2 class="page-header">Dogs</h2>
-    <!-- go to this href to add a dog -->
-    <a type="button" href="{{ url_for('add_dog') }}" class="btn btn-secondary">Add new dog</a>
-    <table class="table">
-      <thead>
-        <th scope="col">Dog name</th>
-        <th scope="col">Age</th>
-        <th scope="col">Wise Nose ID</th>
-        <th scope="col">Actions</th>
-      </thead>
-      <tbody id="members-table">
-      {% for dog in dogs %}
-        <tr>
-          <th scope="col">{{ dog.name }}</th>
-          <th scope="col">{{ dog.age }}</th>
-          <th scope="col">{{ dog.wise_nose_id }}</th>
-          {% if current_user.admin %}
-            <th scope="col">
-            <a type="button" href="{{ url_for('delete_dog', id=dog.id) }}" class="btn btn-danger">Delete</a>
-            <a type="button" href="{{ url_for('edit_dog', id=dog.id) }}" class="btn btn-secondary">Modify</a>
-          </th>
-            {% endif %}
-        </tr>
+        </div>  
     {% endfor %}
-      </tbody>
-    </table>
-  </div>
+</div>
+{% for dog in dogs %}
+    <div class="modal fade" id="staticBackdrop{{dog.id}}" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Delete this dog ?</h5>
+                </button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to delete it?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+                <a type="button" href="{{ url_for('delete_dog', id=dog.id) }}" class="btn btn-primary">Yes</a>
+            </div>
+            </div>
+        </div>
+    </div>         
+{% endfor%}
+<a href="{{ url_for('add_dog') }}" class="fab-material bg-deep-blue btn"><i class="fas fa-plus fa-lg"></i></a>
+<<<<<<< HEAD
 {% endblock %}
+=======
+>>>>>>> Add db actions to dog page
