@@ -1,5 +1,3 @@
-<!--from wtforms import StringField, SubmitField, SelectField, RadioField, widgets, FieldList, SelectMultipleField,
-FileField, DecimalField, PasswordField, BooleanField, MultipleFileField, DateTimeField, IntegerField-->
 {% extends 'base.html' %}
 
 {% block head %}
@@ -38,10 +36,6 @@ FileField, DecimalField, PasswordField, BooleanField, MultipleFileField, DateTim
 					{{ form.password(class="form-control form-control-lg") }}
 				{% endif %}
 			</div>
-			<div class="form-check">
-				{{ form.remember(class='form-check-input') }}
-				{{ form.remember.label(class='form-check-input-label') }}
-			</div>
 		</fieldset>
 		<div class="form-group">
 			{{ form.submit(class="btn btn-outline-info") }}
@@ -50,24 +44,7 @@ FileField, DecimalField, PasswordField, BooleanField, MultipleFileField, DateTim
 </div>
 <div class="border-top pt-3">
 	<small class="text-muted">
-		Need An Account? <a class="ml-2" href="{{ url_for('register') }}"> Sign Up</a>
+		Need An Account? <a class="ml-2" href="{{ url_for('contact') }}">Contact us</a>
 	</small>
 </div>
 {% endblock %}
-
-<div class="container">
-  <h2 class="page-header">Login to Wise Nose</h2>
-  <form action="/login" method="post">
-    <div>
-      <label>Username</label>
-      <input type="text" name="username" id="username">
-    </div>
-    <div>
-      <label>Password</label>
-      <input type="password" name="pw" id="pw">
-    </div>
-    <input type="submit" value="Login">
-
-
-  </form>
-</div>
