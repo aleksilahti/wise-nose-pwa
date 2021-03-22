@@ -21,8 +21,7 @@
                         <div class="col">
                             <p><u>Trainer:</u><p>
                             <p class="card-text">{{dog.trainer_id}}</p>
-                            <p><u>Wise Nose ID:</u><p>
-                            <p class="card-text">{{ dog.wise_nose_id }}</p>
+                            <div class="wise_nose_id">ID: {{ dog.wise_nose_id }}</div>
                             {% if current_user.admin %}
                                 <div class="row action-buttons-dogs">
                                     <a href="{{ url_for('edit_dog', id=dog.id) }}" class="btn action-button bg-contrast-blue"><i class="fas fa-pen fa-lg"></i></a>
