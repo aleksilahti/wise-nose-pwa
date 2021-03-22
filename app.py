@@ -71,7 +71,7 @@ def home():
     return render_template('index.html')
 
 
-# Login / Register
+# Login / Register / Logout
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if current_user.is_authenticated:
@@ -102,10 +102,16 @@ def register():
         return redirect(url_for('login'))
     return render_template('register.html', title='Register', form=form)
 
+@app.route("/logout", methods=["GET"])
+def logout():
+    if current_user.is_authenticated:
+        logout_user()
+    return redirect(url_for('home'))
+
 # Dog routes
 @app.route("/dogs")
 def dogs():
-    return "dogs"
+    return render_template("dogs.html")
 
 @app.route("/dogs/<int:id>")
 def dog(id):
@@ -201,11 +207,11 @@ def modify_session(id):
 def review_session(id):
     return "review session" + str(id)
 
+# PWA 
+@app.route('/service-worker.js')
+def sw():
+    return app.send_static_file('service-worker.js')
+
 # Toggle debug mode (run as "python3 app.py")
 if __name__ == "__main__":
     app.run(debug=True)
-
-
-
-
-
