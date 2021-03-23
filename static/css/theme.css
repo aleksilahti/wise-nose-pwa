@@ -414,7 +414,7 @@ So different display format
     margin: 0;
 }
 
-/** User page **/
+/** User page and also used in accessrequests **/
 
 
 .user{
@@ -467,4 +467,14 @@ So different display format
         border: 0;
         border-left: 1px solid rgba(0,0,0,.125);
     }
+}
+
+/** Access requests page **/
+
+.access-request .list-group{
+    height: 100%;
+}
+
+.access-request .list-group-item{
+    height: 50%;
 }
