@@ -351,3 +351,62 @@ So different display format
     font-size: 0.75rem;
 }
 
+/** Account page **/
+
+.account{
+    padding-top: 5rem;
+}
+
+.account .row{
+    justify-content: center;
+}
+
+.account .row:nth-child(2){
+    margin-bottom: 5rem;
+    text-align: center;
+}
+
+.account h1{
+    font-weight: bold;
+}
+
+.account-info-container{
+    padding: 0;
+}
+
+.account-info-container .list-group{
+    border-radius: calc(.25rem - 1px) calc(.25rem - 1px) 0 0 ;
+}
+
+.account-info-container .list-group-item{
+    border: 0;
+}
+
+.account-info-container .col-md-8{
+    min-height: 20rem;
+    border-top: 1px solid rgba(0,0,0,.125);
+}
+@media (min-width: 768px){
+    .account-info-container .list-group{
+        border-radius: calc(.25rem - 1px) 0 0 calc(.25rem - 1px);
+    }
+    
+    .account-info-container .col-md-8{
+        border: 0;
+        border-left: 1px solid rgba(0,0,0,.125);
+    }
+}
+
+.account-info-container .list-group-item.active{
+    background-color: #2A9D8F;
+}
+
+.btn.action-user{
+    position: absolute;
+    bottom: 1rem;
+    right: 1rem;
+}
+
+.card-title.username{
+    margin: 0;
+}
