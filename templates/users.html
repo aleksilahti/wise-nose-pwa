@@ -5,31 +5,41 @@
 {% endblock %}
 
 {% block body %}
-<div class="container">
-    <h2 class="page-header">Users</h2>
-    <table class="table">
-      <thead>
-        <th scope="col">Full name</th>
-        <th scope="col">Username</th>
-        <th scope="col">Organization</th>
-        <th scope="col">Actions</th>
-        <th scope="col">Admin</th>
-      </thead>
-      <tbody id="users-table">
+  <div class="user">
+    <div class="row">
+      <h1>Users</h1>
+    </div>
+    <div class="row">
+      <p class="text-muted">Update users and set their preferences.</p>
+    </div>
+    <div class="row row-cols-1 row-cols-md-2 align-items-stretch">
       {% for user in users %}
-        <tr>
-          <th scope="col">{{ user.name }}</th>
-          <th scope="col">{{ user.username }}</th>
-          <th scope="col">{{ user.organization }}</th>
-          <th scope="col">
-            <a type="button" href="{{ url_for('change_pw', user_id=user.id) }}" class="btn btn-primary">Reset password</a>
-            <a type="button" href="{{ url_for('delete_user', user_id=user.id) }}" class="btn btn-danger">Delete user</a>
-            <a type="button" href="{{ url_for('toggle_admin', user_id=user.id) }}" class="btn btn-secondary">Toggle admin</a>
-          </th>
-          <th scope="col">{{ user.admin }}</th>
-        </tr>
-    {% endfor %}
-      </tbody>
-    </table>
+        <div class="mb-4 col">
+          <div class="card user-info-container">
+            <div class="row no-gutters">
+              <div class="col-md-5">
+                <div class="list-group">
+                  <a href="{{ url_for('change_pw', user_id=user.id) }}" class="list-group-item bg-primary">Reset password</a>
+                  <a href="{{ url_for('delete_user', user_id=user.id) }}" class="list-group-item bg-danger">Delete user</a>
+                  <a href="{{ url_for('toggle_admin', user_id=user.id) }}" class="list-group-item bg-secondary">Toggle admin</a>
+                </div>
+              </div>
+              <div class="col-md-7">
+                <div class="card-body">
+                  {% if user.name != none %}
+                    <h5 class="card-title username">{{ user.username }}</h5>
+                    <p class="card-text"><small class="text-muted">Name: {{user.name}}</small></p>
+                  {% else %}
+                    <h5 class="card-title">{{ user.username }}</h5>
+                  {% endif %}
+                  <p class="card-text">Organization:<span class="font-italic"> {{ user.organization }}</span></p>
+                  <p class="card-text">Admin:<span class="font-italic"> {{ user.admin }}</span></p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
   </div>
 {% endblock %}

@@ -16,7 +16,10 @@
 
 .bg-contrast-white{
     background-color: rgba(255,255,255,0.45);
+}
 
+.bg-green{
+    background-color: #2A9D8F;
 }
 
 body{
@@ -409,4 +412,59 @@ So different display format
 
 .card-title.username{
     margin: 0;
+}
+
+/** User page **/
+
+
+.user{
+    padding-top: 5rem;
+}
+
+.user .row h1{
+    font-weight: bold;
+}
+
+.user .row{
+    justify-content: center;
+}
+
+.user .row:nth-child(2){
+    margin-bottom: 5rem;
+    text-align: center;
+}
+
+.user-info-container{
+    padding: 0;
+}
+
+.user-info-container .card-body{
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+}
+
+.user-info-container .list-group-item{
+    border: 0;
+    color: white;
+    text-decoration: none;
+}
+
+.user-info-container .list-group{
+    border-radius: calc(.25rem - 1px) calc(.25rem - 1px) 0 0 ;
+    text-align: center;
+}
+
+.user-info-container .col-md-8{
+    border-top: 1px solid rgba(0,0,0,.125);
+}
+
+@media (min-width: 768px){
+    .user-info-container .list-group{
+        border-radius: calc(.25rem - 1px) 0 0 calc(.25rem - 1px);
+    }
+    
+    .user-info-container .col-md-8{
+        border: 0;
+        border-left: 1px solid rgba(0,0,0,.125);
+    }
 }
