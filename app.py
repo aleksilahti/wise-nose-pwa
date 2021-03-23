@@ -406,6 +406,7 @@ def contact():
                                username=form.username.data,
                                email=form.email.data,
                                organization=form.organization.data,
+                               message = form.message.data
                                )
         db.session.add(contact_request)
         db.session.commit()
