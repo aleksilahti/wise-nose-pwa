@@ -539,10 +539,16 @@ So different display format
         width: 100vw;
         max-width: 100vw;
     }
+
+    .session .col-10{
+        margin-top: 3rem;
+    }
     .sessions-tabs{
+        position: fixed;
+        top: 4.5rem;
+        z-index: 5;
         margin-top: -1rem;
         padding: 0;
-        width: 50vw;
         margin-bottom: 2rem;
     }
 
@@ -579,6 +585,19 @@ So different display format
     }
     .action-buttons-sessions{
         position: absolute;
+    }
+
+    .container{
+        position: sticky;
+        top: 4.5rem;
+        overflow-y: scroll;
+        height: 100vh;
+    }
+
+
+    .sessions-tabs .nav{
+        position: sticky;
+        top:0;
     }
 }
 /** circle member/dog picture **/

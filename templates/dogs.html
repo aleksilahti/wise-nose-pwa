@@ -20,7 +20,7 @@
                         </div>
                         <div class="col">
                             <p><u>Trainer:</u><p>
-                            <p class="card-text">{{dog.trainer_id}}</p>
+                            <p class="card-text">{{dog.trainer.name}}</p>
                             <div class="wise_nose_id">ID: {{ dog.wise_nose_id }}</div>
                             {% if current_user.admin %}
                                 <div class="row action-buttons-dogs">

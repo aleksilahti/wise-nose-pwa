@@ -28,8 +28,8 @@
                                         </div>
                                         <div class="col-md-8">
                                             <div class="card-body">
-                                                <p class="card-text">Dog Name:</p>
-                                                <p class="card-text">Trainer Name:</p>
+                                                <p class="card-text">Dog Name: {{session.dog.name}}</p>
+                                                <p class="card-text">Trainer Name: {{session.user.username}}</p>
                                                 <div class="row pictures">
                                                     <img class="picture" src="{{ url_for('static', filename='images/dog_try.jpg') }}" alt="">
                                                     <img class="picture" src="{{ url_for('static', filename='images/member_try.jpg') }}" alt="">
@@ -61,8 +61,8 @@
                                         </div>
                                         <div class="col-md-8">
                                             <div class="card-body">
-                                                <p class="card-text">Dog Name:</p>
-                                                <p class="card-text">Trainer Name:</p>
+                                                <p class="card-text">Dog Name: {{session.dog.name}}</p>
+                                                <p class="card-text">Trainer Name: {{session.user.username}}</p>
                                                 <div class="row pictures">
                                                     <img class="picture" src="{{ url_for('static', filename='images/dog_try.jpg') }}" alt="">
                                                     <img class="picture" src="{{ url_for('static', filename='images/member_try.jpg') }}" alt="">
