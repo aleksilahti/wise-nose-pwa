@@ -248,7 +248,10 @@ def delete_sample(id):
 # Sessions routes, create/edit/delete, execute/modify/review (success?)
 @app.route("/sessions")
 def sessions():
-    return "sessions"
+    if current_user.is_authenticated:
+        sessions = Session.query.all()
+        return render_template('sessions_list.html', sessions=sessions)
+    return redirect(url_for('login'))
 
 @app.route("/sessions/<int:id>")
 def session_info(id):
