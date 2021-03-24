@@ -22,6 +22,14 @@
     background-color: #2A9D8F;
 }
 
+.bg-green-sessions{
+    background-color: rgba(42,157,143,0.6);
+}
+
+.bg-blue-sessions{
+    background-color: rgba(87,151,178,0.8);
+}
+
 body{
     /* prevent the navbar to overlap the content */
     min-height: 75rem;
@@ -280,6 +288,7 @@ So different display format
     position: absolute;
     bottom: 1rem;
     right: 2rem;
+    flex-direction: row;
 }
 
 .action-buttons-members{
@@ -497,7 +506,6 @@ So different display format
 }
 
 .session-container .card{
-    background-color: rgba(87,151,178,0.8);
     color: white;
 }
 
@@ -555,8 +563,24 @@ So different display format
         border-bottom: 0.2rem solid white;
     }
     
-}
+    .pictures{
+        display: none;
+    }
 
+    .action-buttons-sessions{
+        margin: 0;
+        position: static;
+        justify-content: flex-end;
+    }
+}
+@media(min-width:768px){
+    .pictures{
+        display: flex;
+    }
+    .action-buttons-sessions{
+        position: absolute;
+    }
+}
 /** circle member/dog picture **/
 
 .picture{
