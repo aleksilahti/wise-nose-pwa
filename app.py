@@ -1,5 +1,6 @@
-from flask import Flask, render_template, redirect, request, url_for, flash, session
+from flask import Flask, render_template, redirect, request, url_for, flash, session, send_file
 import os
+import zipfile
 import email_validator
 
 app = Flask("Wise Nose PWA")
@@ -289,7 +290,7 @@ def account():
 @app.route("/export")
 def export():
     if current_user.is_authenticated:
-        return render_template('account.html', user=current_user)
+        return render_template('exportdatabase.html')
     return redirect(url_for('login'))
 
 @app.route("/users")
@@ -412,6 +413,47 @@ def contact():
         flash('Access request sent!', 'success')
         return redirect(url_for('home'))
     return render_template('contact.html', form=form)
+
+
+# Database -> csv
+@app.route("/database/export", methods=["GET"])
+def download_all_files():
+    if current_user.is_authenticated:
+        create_csv(Dog.query.all(), "dogs.csv")
+        create_csv(Session.query.all(), "sessions.csv")
+        create_csv(Sample.query.all(), "samples.csv")
+        create_csv(Person.query.all(), "people.csv")
+
+        zipf = zipfile.ZipFile('data.zip', 'w', zipfile.ZIP_DEFLATED)
+        for root, dirs, files in os.walk('data/'):
+            for file in files:
+                zipf.write('data/' + file)
+        zipf.close()
+        return send_file('data.zip',
+                         mimetype='zip',
+                         attachment_filename='data.zip',
+                         as_attachment=True)
+    return redirect(url_for('login'))
+
+
+def create_csv(data, file_basename):
+    w_file = open("data/" + file_basename, 'w+')
+
+    json_data = [{c.name: getattr(i, c.name) for c in i.__table__.columns} for i in data]
+
+    if len(json_data) == 0:
+        return
+
+    # write header to the csv-file
+    w_file.write(", ".join(json_data[0].keys()) + '\n')
+
+    # write values to the csv-file
+    for row in json_data:
+        print(row.values())
+        w_file.write(", ".join([str(j) for j in row.values()]) + '\n')
+
+    w_file.close()
+
 
 # PWA 
 @app.route('/service-worker.js')
