@@ -529,7 +529,7 @@ So different display format
     width: 100%;
 }
 
-@media (max-width: 768px){
+@media (max-width: 991px){
     .container{
         width: 100vw;
         max-width: 100vw;
@@ -586,20 +586,19 @@ So different display format
     .action-buttons-sessions{
         position: absolute;
     }
+}
 
-    .container{
+@media(min-width: 992px){
+    .container.\/sessions{
         position: sticky;
         top: 4.5rem;
-        overflow-y: scroll;
-        height: 100vh;
     }
 
-
-    .sessions-tabs .nav{
-        position: sticky;
-        top:0;
+    .session .col-10{
+        overflow-y: scroll;
     }
 }
+
 /** circle member/dog picture **/
 
 .picture{
