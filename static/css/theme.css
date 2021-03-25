@@ -599,6 +599,7 @@ So different display format
     }
 }
 
+
 /** circle member/dog picture **/
 
 .picture{
@@ -615,3 +616,60 @@ img.picture{
     align-self: center;
     object-fit: cover;
 }
+
+/** sample based css **/ 
+
+.sample-container{
+    justify-content: flex-start !important;
+}
+
+.samples{
+    display: flex;
+    flex-direction: column;
+}
+
+.sample-box{
+    border-radius: 4px;
+    width: 4rem;
+    height: 4rem;
+    margin: 1rem;
+    outline: solid #B2B2B2;
+    outline-offset: 0.25rem;
+    outline-style: auto;
+}
+
+.sample{
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+}
+
+.sample p{
+    margin: 0;
+    align-self: center;
+}
+
+.sample-box.add{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #E1E1E1;
+    outline: 0;
+    margin-left: 1.75rem;
+}
+
+@media(min-width:1024px){
+    .samples{
+        flex-direction: row;
+    }
+
+    .sample{
+        justify-content: center;
+    }
+
+    .sample p{
+        position: absolute;
+        bottom: 1rem;
+    }
+}
+

@@ -26,24 +26,27 @@
       </div>
     {% endfor %}
   </div>
-  {% for member in members %}
-    <div class="modal fade" id="staticBackdrop{{member.id}}" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="staticBackdropLabel">Delete this member ?</h5>
-                </button>
-            </div>
-            <div class="modal-body">
-                Are you sure you want to delete it?
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
-                <a type="button" href="{{ url_for('delete_member', id=member.id) }}" class="btn btn-primary">Yes</a>
-            </div>
-            </div>
-        </div>
-    </div>         
-  {% endfor%}
   <a href="{{ url_for('add_member') }}" class="fab-material bg-deep-blue btn"><i class="fas fa-plus fa-lg"></i></a>
+{% endblock %}
+
+{% block modal %}
+{% for member in members %}
+<div class="modal fade" id="staticBackdrop{{member.id}}" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="staticBackdropLabel">Delete this member ?</h5>
+            </button>
+        </div>
+        <div class="modal-body">
+            Are you sure you want to delete it?
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+            <a type="button" href="{{ url_for('delete_member', id=member.id) }}" class="btn btn-primary">Yes</a>
+        </div>
+        </div>
+    </div>
+</div>         
+{% endfor%}
 {% endblock %}

@@ -36,7 +36,7 @@
                                                 </div>
                                                 {% if current_user.admin %}
                                                     <div class="row action-buttons-sessions">
-                                                        <a href="{{ url_for('edit_session', id=session.id) }}" class="btn action-button bg-contrast-blue"><i class="fas fa-pen fa-lg"></i></a>
+                                                        <a href="{{ url_for('session_info', id=session.id) }}" class="btn action-button bg-contrast-blue"><i class="fas fa-pen fa-lg"></i></a>
                                                         <button type"button" class="btn action-button bg-contrast-blue" data-toggle="modal" data-target="#staticBackdrop{{session.id}}"><i class="fas fa-trash fa-lg"></i></button>
                                                     </div>
                                                 {% endif %}
@@ -69,7 +69,7 @@
                                                 </div>
                                                 {% if current_user.admin %}
                                                     <div class="row action-buttons-sessions">
-                                                        <a href="{{ url_for('edit_session', id=session.id) }}" class="btn action-button bg-contrast-blue"><i class="fas fa-pen fa-lg"></i></a>
+                                                        <a href="{{ url_for('modify_session', id=session.id) }}" class="btn action-button bg-contrast-blue"><i class="fas fa-pen fa-lg"></i></a>
                                                         <button type"button" class="btn action-button bg-contrast-blue" data-toggle="modal" data-target="#staticBackdrop{{session.id}}"><i class="fas fa-trash fa-lg"></i></button>
                                                     </div>
                                                 {% endif %}
@@ -85,6 +85,10 @@
         </div>
     </div>
 </div>
+<a href="{{ url_for('create_session') }}" class="fab-material bg-deep-blue btn"><i class="fas fa-plus fa-lg"></i></a>
+{% endblock %}
+
+{% block modal %}
 {% for session in sessions %}
     <div class="modal fade" id="staticBackdrop{{session.id}}" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
@@ -98,11 +102,11 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
-                <a type="button" href="{{ url_for('delete_session', id=session.id) }}" class="btn btn-primary">Yes</a>
+                <a type="button" href="{{ url_for('session_info', id=session.id) }}" class="btn btn-primary">Yes</a>
             </div>
             </div>
         </div>
     </div>         
 {% endfor%}
-<a href="{{ url_for('create_session') }}" class="fab-material bg-deep-blue btn"><i class="fas fa-plus fa-lg"></i></a>
+
 {% endblock %}

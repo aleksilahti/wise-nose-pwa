@@ -35,6 +35,10 @@
         </div>  
     {% endfor %}
 </div>
+<a href="{{ url_for('add_dog') }}" class="fab-material bg-deep-blue btn"><i class="fas fa-plus fa-lg"></i></a>
+{% endblock %}
+
+{% block modal %}
 {% for dog in dogs %}
     <div class="modal fade" id="staticBackdrop{{dog.id}}" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
@@ -54,5 +58,4 @@
         </div>
     </div>         
 {% endfor%}
-<a href="{{ url_for('add_dog') }}" class="fab-material bg-deep-blue btn"><i class="fas fa-plus fa-lg"></i></a>
 {% endblock %}

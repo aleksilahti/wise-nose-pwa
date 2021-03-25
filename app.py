@@ -255,7 +255,10 @@ def sessions():
 
 @app.route("/sessions/<int:id>")
 def session_info(id):
-    return "person" + str(id)
+    if current_user.is_authenticated:
+        session = Session.query.filter_by(id=id).first()
+        return render_template('sessions_modify.html', session=session)
+    return redirect(url_for('login'))
 
 @app.route("/sessions/create", methods=["GET", "POST"])
 def create_session():
@@ -263,12 +266,11 @@ def create_session():
 
 @app.route("/sessions/edit/<int:id>", methods=["GET", "POST"])
 def edit_session(id):
-    return "edit session" + str(id)
+    return "delete session" + str(id)
 
 @app.route("/sessions/delete/<int:id>", methods=["GET", "POST"])
 def delete_session(id):
     return "delete session" + str(id)
-
 
 @app.route("/sessions/execute/<int:id>", methods=["GET", "POST"])
 def execute_session(id):
@@ -276,7 +278,7 @@ def execute_session(id):
 
 @app.route("/sessions/modify/<int:id>", methods=["GET", "POST"])
 def modify_session(id):
-    return "modify session" + str(id)
+    return "delete session" + str(id)
 
 @app.route("/sessions/review/<int:id>")
 def review_session(id):
