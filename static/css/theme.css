@@ -708,10 +708,15 @@ img.picture{
 }
 
 .session-info-container .list-group-item.active{
-    color: black;
+    display: none;
 }
 
 .session-info-container .list-group-item:nth-child(1){
     bottom: 0rem;
     left: 0rem;
+}
+
+.session-info-container .submit{
+    display: flex;
+    justify-content: flex-end;
 }

@@ -63,3 +63,26 @@ function sample_box_listener(){
           }
      })
 }
+
+$("#save").on("click", function(){
+     var samples = [] // false --> not hot / true --> hot
+     $(".sample").toArray().forEach(function(_, index){
+          if(!$($(".sample").toArray()[index].children).hasClass("add")){
+               if($($(".sample").toArray()[index].children).hasClass("bg-not-hot")){
+                    samples.push(false)
+               }else{
+                    samples.push(true)
+               }
+          }
+     });
+     console.log(samples)
+     $.post("/sessions/edit/1", 
+     {
+          "date": $("#date").val(),
+          "dog": $("#dog").val(),
+          "trainer": $("#trainer").val(),
+          "supervisor": $("#supervisor").val(),
+          "number_of_samples": $("#number_of_samples").val(),
+          "samples": samples
+     })
+})

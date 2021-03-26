@@ -263,6 +263,7 @@ def create_session():
 
 @app.route("/sessions/edit/<int:id>", methods=["GET", "POST"])
 def edit_session(id):
+    print(request.form)
     return "delete session" + str(id)
 
 @app.route("/sessions/delete/<int:id>", methods=["GET", "POST"])
@@ -277,6 +278,10 @@ def execute_session(id):
 def modify_session(id):
     if current_user.is_authenticated:
         form = SessionForm()
+        print("test")
+        print(form.validate_on_submit())
+        if form.validate_on_submit():
+            print(form.date.data)
         session = Session.query.filter_by(id=id).first()
         form.dog.choices = [(g.id, g.name) for g in Dog.query.order_by('name')]
         form.trainer.choices = [(g.id, g.name) for g in Person.query.order_by('name').filter(or_(Person.role==1, Person.role==3))]
