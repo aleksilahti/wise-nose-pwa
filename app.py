@@ -338,7 +338,8 @@ def create_user(contact_id):
                 contact_request = Contact.query.filter_by(id=contact_id).first()
                 pw = generate_pw()
                 hashed_pw = bcrypt.generate_password_hash(pw).decode('utf-8')
-                user = User(name=contact_request.name, username=contact_request.username, email=contact_request.email, pw_hash=hashed_pw)
+                user = User(name=contact_request.name, username=contact_request.username, email=contact_request.email,
+                            pw_hash=hashed_pw)
                 db.session.add(user)
                 db.session.commit()
                 # remove pw from this message and replace with email sent to the user email
@@ -455,7 +456,7 @@ def create_csv(data, file_basename):
     w_file.close()
 
 
-# PWA 
+# PWA
 @app.route('/service-worker.js')
 def sw():
     return app.send_static_file('service-worker.js')
