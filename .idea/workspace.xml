@@ -1,15 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="BranchesTreeState">
+    <expand>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="LOCAL_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="GROUP_NODE:origin" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+    </expand>
+    <select />
+  </component>
   <component name="ChangeListManager">
     <list default="true" id="369d8305-5b80-445a-ad0a-a7b0eeb0fdd9" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/templates/newmember.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/csv-plugin.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/exportdatabase.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/app.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/forms.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/base.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/base.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/dogs.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/dogs.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/members.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/members.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test.db" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/css/theme.css" beforeDir="false" afterPath="$PROJECT_DIR$/static/css/theme.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/service-worker.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/service-worker.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/users.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/users.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test.db" beforeDir="false" afterPath="$PROJECT_DIR$/test.db" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -25,7 +43,13 @@
     </option>
   </component>
   <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="data-synchronization" />
+      </map>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="UPDATE_TYPE" value="REBASE" />
   </component>
   <component name="GitSEFilterConfiguration">
     <file-type-list>
@@ -47,17 +71,54 @@
     <property name="DefaultHtmlFileTemplate" value="HTML File" />
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
     <property name="dart.analysis.tool.window.visible" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/data" />
     <property name="project.structure.last.edited" value="Project" />
     <property name="project.structure.proportion" value="0.0" />
     <property name="project.structure.side.proportion" value="0.0" />
     <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
     <property name="show.migrate.to.gradle.popup" value="false" />
   </component>
-  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/data" />
+    </key>
+  </component>
+  <component name="RunManager">
+    <configuration name="app" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="wise-nose-pwa" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/app.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Python.app" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SpellCheckerSettings" BundledDictionaries="0" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" Dictionaries="0" CorrectionsLimit="5" DefaultDictionary="application-level" UseSingleDictionary="true" />
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
       <changelist id="369d8305-5b80-445a-ad0a-a7b0eeb0fdd9" name="Default Changelist" comment="" />
@@ -72,6 +133,75 @@
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="UnknownFeatures">
+    <option featureType="com.intellij.fileTypeFactory" implementationName="*.js" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="oldMeFiltersMigrated" value="true" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="141" y="57" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1616527555728">
+      <screen x="0" y="30" width="1366" height="738" />
+    </state>
+    <state x="141" y="57" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.30.1366.738@0.30.1366.738" timestamp="1616527555728" />
+    <state x="440" y="202" width="475" height="396" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1616627703016">
+      <screen x="0" y="30" width="1366" height="738" />
+    </state>
+    <state x="440" y="202" width="475" height="396" key="#com.intellij.fileTypes.FileTypeChooser/0.30.1366.738@0.30.1366.738" timestamp="1616627703016" />
+    <state x="416" y="148" width="524" height="504" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog" timestamp="1616627923799">
+      <screen x="0" y="30" width="1366" height="738" />
+    </state>
+    <state x="416" y="148" width="524" height="504" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog/0.30.1366.738@0.30.1366.738" timestamp="1616627923799" />
+    <state width="1343" height="131" key="GridCell.Tab.0.bottom" timestamp="1616628292222">
+      <screen x="0" y="30" width="1366" height="738" />
+    </state>
+    <state width="1343" height="131" key="GridCell.Tab.0.bottom/0.30.1366.738@0.30.1366.738" timestamp="1616628292222" />
+    <state width="1343" height="131" key="GridCell.Tab.0.center" timestamp="1616628292222">
+      <screen x="0" y="30" width="1366" height="738" />
+    </state>
+    <state width="1343" height="131" key="GridCell.Tab.0.center/0.30.1366.738@0.30.1366.738" timestamp="1616628292222" />
+    <state width="1343" height="131" key="GridCell.Tab.0.left" timestamp="1616628292221">
+      <screen x="0" y="30" width="1366" height="738" />
+    </state>
+    <state width="1343" height="131" key="GridCell.Tab.0.left/0.30.1366.738@0.30.1366.738" timestamp="1616628292221" />
+    <state width="1343" height="131" key="GridCell.Tab.0.right" timestamp="1616628292222">
+      <screen x="0" y="30" width="1366" height="738" />
+    </state>
+    <state width="1343" height="131" key="GridCell.Tab.0.right/0.30.1366.738@0.30.1366.738" timestamp="1616628292222" />
+    <state width="1343" height="123" key="GridCell.Tab.1.bottom" timestamp="1616627763673">
+      <screen x="0" y="30" width="1366" height="738" />
+    </state>
+    <state width="1343" height="123" key="GridCell.Tab.1.bottom/0.30.1366.738@0.30.1366.738" timestamp="1616627763673" />
+    <state width="1343" height="123" key="GridCell.Tab.1.center" timestamp="1616627763672">
+      <screen x="0" y="30" width="1366" height="738" />
+    </state>
+    <state width="1343" height="123" key="GridCell.Tab.1.center/0.30.1366.738@0.30.1366.738" timestamp="1616627763672" />
+    <state width="1343" height="123" key="GridCell.Tab.1.left" timestamp="1616627763671">
+      <screen x="0" y="30" width="1366" height="738" />
+    </state>
+    <state width="1343" height="123" key="GridCell.Tab.1.left/0.30.1366.738@0.30.1366.738" timestamp="1616627763671" />
+    <state width="1343" height="123" key="GridCell.Tab.1.right" timestamp="1616627763672">
+      <screen x="0" y="30" width="1366" height="738" />
+    </state>
+    <state width="1343" height="123" key="GridCell.Tab.1.right/0.30.1366.738@0.30.1366.738" timestamp="1616627763672" />
+    <state x="488" y="315" width="389" height="171" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1616527545222">
+      <screen x="0" y="30" width="1366" height="738" />
+    </state>
+    <state x="488" y="315" width="389" height="171" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/0.30.1366.738@0.30.1366.738" timestamp="1616527545222" />
+    <state x="701" y="148" width="583" height="570" key="find.popup" timestamp="1616628155145">
+      <screen x="0" y="30" width="1366" height="738" />
+    </state>
+    <state x="701" y="148" width="583" height="570" key="find.popup/0.30.1366.738@0.30.1366.738" timestamp="1616628155145" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

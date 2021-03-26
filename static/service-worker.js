@@ -43,3 +43,31 @@ self.addEventListener('fetch', (evt) => {
       })
     );
   });
+
+// TODO test and check
+self.addEventListener('sync', (event) => {
+  if (event.tag === 'create-session') {
+    event.waitUntil(
+      getMessagesFromOutbox().then(messages => {
+
+      }
+        // Post the messages to the server
+        return fetch('/create-session', {
+          method: 'POST',
+          body: JSON.stringify(messages),
+          headers: { 'Content-Type': 'application/json' }
+        }).then(() => {
+
+          // Success! Remove them from the outbox
+          return removeMessagesFromOutbox(messages);
+        });
+
+      }).then(() => {
+
+        // Tell pages of your success so they can update UI
+        return clients.matchAll({ includeUncontrolled: true });
+      }).then(clients => {
+        clients.forEach(client => client.postMessage('outbox-processed'))
+      })
+    }
+});
