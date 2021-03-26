@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
-from wtforms.validators import DataRequired, Email, EqualTo, ValidationError, Length
-from wtforms import StringField, SubmitField, PasswordField, BooleanField, RadioField
+from wtforms.validators import DataRequired, Email, EqualTo, ValidationError, Length, NumberRange
+from wtforms import StringField, SubmitField, PasswordField, BooleanField, RadioField, IntegerField , SelectField,DateTimeField
 from app import User, Person, Session, Sample
 
 class LoginForm(FlaskForm):
@@ -58,3 +58,10 @@ class MemberForm(FlaskForm):
     role = RadioField('Member Role', coerce=int, default=1, choices=[(1,'Trainer'),(2,'Supervisor'), (3,'Trainer/Supervisor')])
     wise_nose_id = StringField('Wise Nose ID', validators=[Length(min=0, max=100)])
     submit = SubmitField('Add member')
+
+class SessionForm(FlaskForm):
+    date = DateTimeField('Date', validators=[DataRequired()],format='%d-%m-%Y %H:%M')
+    dog = SelectField('Dog', coerce=int, validators=[DataRequired()])
+    trainer = SelectField('Trainer', coerce=int)
+    supervisor = SelectField('Supervisor', coerce=int)
+    number_of_samples = IntegerField('Number of samples', validators=[DataRequired(), NumberRange(min=0, max=9)])

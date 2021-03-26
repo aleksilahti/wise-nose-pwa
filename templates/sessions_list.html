@@ -36,7 +36,7 @@
                                                 </div>
                                                 {% if current_user.admin %}
                                                     <div class="row action-buttons-sessions">
-                                                        <a href="{{ url_for('session_info', id=session.id) }}" class="btn action-button bg-contrast-blue"><i class="fas fa-pen fa-lg"></i></a>
+                                                        <a href="{{ url_for('modify_session', id=session.id) }}" class="btn action-button bg-contrast-blue"><i class="fas fa-pen fa-lg"></i></a>
                                                         <button type"button" class="btn action-button bg-contrast-blue" data-toggle="modal" data-target="#staticBackdrop{{session.id}}"><i class="fas fa-trash fa-lg"></i></button>
                                                     </div>
                                                 {% endif %}

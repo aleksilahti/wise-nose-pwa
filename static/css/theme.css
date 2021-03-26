@@ -589,14 +589,11 @@ So different display format
 }
 
 @media(min-width: 992px){
-    .container.\/sessions{
-        position: sticky;
-        top: 4.5rem;
+    .container.\/sessions .sessions-tabs .nav{
+        position: fixed;
+        width: 9rem;
     }
 
-    .session .col-10{
-        overflow-y: scroll;
-    }
 }
 
 
@@ -620,7 +617,7 @@ img.picture{
 /** sample based css **/ 
 
 .sample-container{
-    justify-content: flex-start !important;
+    justify-content: center ;
 }
 
 .samples{
@@ -658,7 +655,11 @@ img.picture{
     margin-left: 1.75rem;
 }
 
-@media(min-width:1024px){
+/* @media(min-width:1024px){
+    .sample-container{
+        justify-content: center !important;
+        margin-top: 1rem;
+    }
     .samples{
         flex-direction: row;
     }
@@ -668,8 +669,49 @@ img.picture{
     }
 
     .sample p{
-        position: absolute;
-        bottom: 1rem;
+        align-self: auto;
+        position: relative;
+        top: -1rem;
+        left: 50%;
     }
+} */
+
+.bg-not-hot{
+    background-color: #E24D28;
 }
 
+.bg-hot{
+    background-color: #2A9D8F;
+}
+
+.session-form{
+    padding: 1.25rem !important;
+}
+
+.session-info-container{
+    padding: 0;
+}
+
+.session-info-container .list-group-item:nth-child(2){
+    bottom: 0rem;
+    right: 0rem;
+}
+
+.session-info-container .list-group-item{
+    position: absolute;
+    width: fit-content;
+    justify-content: center;
+    display: flex;
+    border: 0;
+    background-color: #fff;
+    color: black;
+}
+
+.session-info-container .list-group-item.active{
+    color: black;
+}
+
+.session-info-container .list-group-item:nth-child(1){
+    bottom: 0rem;
+    left: 0rem;
+}

@@ -5,7 +5,7 @@ import email_validator
 app = Flask("Wise Nose PWA")
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.engine import Engine
-from sqlalchemy import event
+from sqlalchemy import event, or_
 from sqlalchemy.exc import IntegrityError
 from flask_login import LoginManager, login_user, current_user, logout_user, login_required, UserMixin
 from flask_bcrypt import Bcrypt
@@ -255,10 +255,7 @@ def sessions():
 
 @app.route("/sessions/<int:id>")
 def session_info(id):
-    if current_user.is_authenticated:
-        session = Session.query.filter_by(id=id).first()
-        return render_template('sessions_modify.html', session=session)
-    return redirect(url_for('login'))
+    return "create session"
 
 @app.route("/sessions/create", methods=["GET", "POST"])
 def create_session():
@@ -278,7 +275,14 @@ def execute_session(id):
 
 @app.route("/sessions/modify/<int:id>", methods=["GET", "POST"])
 def modify_session(id):
-    return "delete session" + str(id)
+    if current_user.is_authenticated:
+        form = SessionForm()
+        session = Session.query.filter_by(id=id).first()
+        form.dog.choices = [(g.id, g.name) for g in Dog.query.order_by('name')]
+        form.trainer.choices = [(g.id, g.name) for g in Person.query.order_by('name').filter(or_(Person.role==1, Person.role==3))]
+        form.supervisor.choices = [(g.id, g.name) for g in Person.query.order_by('name').filter(or_(Person.role==2, Person.role==3))]
+        return render_template('sessions_modify.html', session=session, form=form)
+    return redirect(url_for('login'))
 
 @app.route("/sessions/review/<int:id>")
 def review_session(id):

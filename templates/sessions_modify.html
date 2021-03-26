@@ -13,65 +13,48 @@
       <p class="text-muted">Update the session properties.</p>
     </div>
     <div class="row">
-        <div class="card mb-3 col-10 account-info-container" >
+        <div class="card mb-3 col-10 session-info-container" >
           <div class="row no-gutters">
-            <div class="col-md-4">
-              <div class="list-group" id="list-tab" role="tablist">
-                <a class="list-group-item list-group-item-action active" id="list-general-list" data-toggle="list" href="#list-general" role="tab" aria-controls="general">General</a>
-                <a class="list-group-item list-group-item-action" id="list-reset-pwd-list" data-toggle="list" href="#list-reset-pwd" role="tab" aria-controls="reset-pwd">Reset password</a>
-                <a class="list-group-item list-group-item-action" id="list-delete-user-list" data-toggle="list" href="#list-delete-user" role="tab" aria-controls="delete-user">Delete user</a>
+            <div class="list-group" id="list-tab" role="tablist">
+              <a class="list-group-item list-group-item-action active" id="list-previous-list" data-toggle="list" href="#list-previous" role="tab" aria-controls="previous"><i class="fas fa-arrow-left fa-lg"></i></a>
+              <a class="list-group-item list-group-item-action" id="list-next-list" data-toggle="list" href="#list-next" role="tab" aria-controls="next"><i class="fas fa-arrow-right fa-lg"></i></a>
+            </div>
+            <div class="col-md-10 session-form">
+            <div class="tab-content" id="nav-tabContent">
+              <div class="tab-pane fade show active" id="list-previous" role="tabpanel" aria-labelledby="list-previous-list">
+                <form>
+                  <div class="form-group">
+                    {{ form.date.label }}
+                    {{form.date(class="form-control form-control-lg", placeholder="e.g. 26-03-2021 14:12")}}
+                  </div>
+                  <div class="form-group">
+                    {{form.dog.label}}
+                    {{form.dog(class="form-control form-control-lg")}}
+                  </div>
+                  <div class="form-group">
+                    {{form.trainer.label}}
+                    {{form.trainer(class="form-control form-control-lg")}}
+                  </div>
+                  <div class="form-group">
+                    {{form.supervisor.label}}
+                    {{form.supervisor(class="form-control form-control-lg")}}
+                  </div>
+                  <div class="form-group">
+                    {{form.number_of_samples.label}}
+                    {{form.number_of_samples(class="form-control form-control-lg", id="number_of_samples", value=0)}}
+                  </div>
+                </form>
+              </div>
+              <div class="tab-pane fade" id="list-next" role="tabpanel" aria-labelledby="list-next-list">
+                <div class="row sample-container">
+                  <div class="samples">
+                    <!-- fill with jquery -->
+                  </div>
+                </div>
               </div>
             </div>
-            <div class="col-md-8">
-              <div class="tab-content" id="nav-tabContent">
-                <div class="tab-pane fade show active" id="list-general" role="tabpanel" aria-labelledby="list-general-list">
-                  {# <div class="card-body">
-                    {% if user.name != none %}
-                      <h5 class="card-title username">{{ user.username }}</h5>
-                      <p class="card-text"><small class="text-muted">Name: {{user.name}}</small></p>
-                    {% else %}
-                      <h5 class="card-title">{{ user.username }}</h5>
-                    {% endif %}
-                    <p class="card-text">Email:<span class="font-italic"> {{ user.email }}</span></p>
-                    <p class="card-text">Organization:<span class="font-italic"> {{ user.organization }}</span></p>
-                    <p class="card-text">Admin:<span class="font-italic"> {{ user.admin }}</span></p>
-                  </div> #}
-                </div>
-                <div class="tab-pane fade" id="list-reset-pwd" role="tabpanel" aria-labelledby="list-reset-pwd-list">
-                 {# <div class="card-body">
-                    <h5 class="card-title">Reset password</h5>
-                    <a href="{{ url_for('change_pw', user_id=user.id) }}" class="btn btn-primary action-user">Reset password</a>
-                  </div>#}
-                </div>
-                <div class="tab-pane fade" id="list-delete-user" role="tabpanel" aria-labelledby="list-delete-user-list">
-                  {#<div class="card-body">
-                    <h5 class="card-title">Delete User</h5>
-                    <p class="card-text">Delete your account and all the data associated permanently.</p>
-                    <a href="{{ url_for('delete_user', user_id=user.id) }}" class="btn btn-danger action-user">Delete user</a>
-                  </div>#}
-                </div>
-              </div>
             </div>
           </div>
-        </div>
-    </div>
-    <div class="row sample-container">
-        <div class="samples">
-            <div class="sample">
-                <p>1</p>
-                <div class="sample-box">
-                </div>
-            </div>
-            <div class="sample">
-                <p>1</p>
-                <div class="sample-box">
-                </div>
-            </div>
-            <div class="sample">
-                <div class="sample-box add">
-                    <i class="fas fa-plus fa-lg"></i>
-                </div>
-            </div>
         </div>
     </div>
 </div>
