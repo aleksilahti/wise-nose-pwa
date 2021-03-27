@@ -1,6 +1,7 @@
 from flask import Flask, render_template, redirect, request, url_for, flash, session
 import os
 import email_validator
+from datetime import datetime
 
 app = Flask("Wise Nose PWA")
 from flask_sqlalchemy import SQLAlchemy
@@ -263,7 +264,15 @@ def create_session():
 
 @app.route("/sessions/edit/<int:id>", methods=["GET", "POST"])
 def edit_session(id):
-    print(request.form)
+    #NOT FINISHED
+    #print(request.form.getlist("samples[]"))
+    s = Session.query.filter_by(id=id).first()
+    s.created = datetime.strptime(request.form["date"], "%d/%m/%Y %H:%M")
+    s.dog_id = request.form["dog"]
+    s.user_id = request.form["trainer"]
+    s.supervisor_id = request.form["supervisor"]
+    s.number_of_samples = request.form["number_of_samples"]
+    db.session.commit()
     return "delete session" + str(id)
 
 @app.route("/sessions/delete/<int:id>", methods=["GET", "POST"])
@@ -272,7 +281,10 @@ def delete_session(id):
 
 @app.route("/sessions/execute/<int:id>", methods=["GET", "POST"])
 def execute_session(id):
-    return "execute session" + str(id)
+    if current_user.is_authenticated:
+        session = Session.query.filter_by(id=id).first()
+        return render_template('session_execute.html', session=session)
+    return redirect(url_for('login'))
 
 @app.route("/sessions/modify/<int:id>", methods=["GET", "POST"])
 def modify_session(id):

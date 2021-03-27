@@ -3,7 +3,7 @@
 }
 
 .bg-light-blue{
-    background-color: rgba(87,151,178,0.35);
+    background-color: rgba(87, 151, 178, 0.35);
 }
 
 .bg-dark-blue{
@@ -655,27 +655,6 @@ img.picture{
     margin-left: 1.75rem;
 }
 
-/* @media(min-width:1024px){
-    .sample-container{
-        justify-content: center !important;
-        margin-top: 1rem;
-    }
-    .samples{
-        flex-direction: row;
-    }
-
-    .sample{
-        justify-content: center;
-    }
-
-    .sample p{
-        align-self: auto;
-        position: relative;
-        top: -1rem;
-        left: 50%;
-    }
-} */
-
 .bg-not-hot{
     background-color: #E24D28;
 }
@@ -720,3 +699,99 @@ img.picture{
     display: flex;
     justify-content: flex-end;
 }
+
+.sample-container.execute .sample .outlined{
+    display: flex;
+    outline: solid #B2B2B2;
+    outline-offset: -0.5rem;
+    outline-style: auto;
+}
+
+.sample-container.execute .sample-box{
+    outline: 0;
+}
+
+.sample-container.execute .sample-box.add{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #E1E1E1;
+    outline: 0;
+    margin: 1rem;
+}
+
+.sample-container.execute .sample{
+    justify-content: flex-start;
+}
+
+.user.execute .row:nth-child(1), .user.execute .row:nth-child(2){
+    display: none;
+}
+
+@media(min-width:1024px){
+
+    .user.execute .row:nth-child(1), .user.execute .row:nth-child(2){
+        display: flex;
+    }
+
+    .sample-container.execute{
+        justify-content: center !important;
+        margin-top: 1rem;
+    }
+    .sample-container.execute .samples{
+        flex-direction: row;
+    }
+
+    .sample-container.execute .sample{
+        justify-content: flex-start;
+        flex-direction: column;
+        margin: 0 0.5rem 0 0.5rem;
+    }
+
+    .sample-container.execute .sample .outlined{
+        flex-direction: column;
+        outline: solid #B2B2B2;
+        outline-offset: -0.5rem;
+        outline-style: auto;
+    }
+
+    .sample-container.execute .sample-box{
+        outline: 0;
+    }
+
+    .sample-container.execute .sample-box.add{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: #E1E1E1;
+        outline: 0;
+        margin: 1rem;
+    }
+
+    .sample-container.execute .sample p{
+        align-self: auto;
+        position: relative;
+        left: 50%;
+    }
+}
+.sample-box p.active  {
+    display: none;
+}
+
+.sample-box:not(.add):not(:first-child):hover .active{
+    display: flex;
+    align-items: flex-end;
+    text-align: center;
+    justify-content: center;
+    text-align: center;
+    color:white;
+    position: relative;
+    left: calc(100% - 0.825rem);
+    top: -0.425rem;
+    width: 1.25rem;
+    height: 1.25rem;
+    border-radius: 50%;
+    background-color: black;
+}
+
+

@@ -29,13 +29,14 @@
                                         <div class="col-md-8">
                                             <div class="card-body">
                                                 <p class="card-text">Dog Name: {{session.dog.name}}</p>
-                                                <p class="card-text">Trainer Name: {{session.user.username}}</p>
+                                                <p class="card-text">Trainer Name: {{session.dog.trainer.name}}</p>
                                                 <div class="row pictures">
                                                     <img class="picture" src="{{ url_for('static', filename='images/dog_try.jpg') }}" alt="">
                                                     <img class="picture" src="{{ url_for('static', filename='images/member_try.jpg') }}" alt="">
                                                 </div>
                                                 {% if current_user.admin %}
                                                     <div class="row action-buttons-sessions">
+                                                        <a href="{{ url_for('execute_session', id=session.id) }}" class="btn action-button bg-contrast-blue"><i class="fas fa-play fa-lg"></i></a>
                                                         <a href="{{ url_for('modify_session', id=session.id) }}" class="btn action-button bg-contrast-blue"><i class="fas fa-pen fa-lg"></i></a>
                                                         <button type"button" class="btn action-button bg-contrast-blue" data-toggle="modal" data-target="#staticBackdrop{{session.id}}"><i class="fas fa-trash fa-lg"></i></button>
                                                     </div>
@@ -62,7 +63,7 @@
                                         <div class="col-md-8">
                                             <div class="card-body">
                                                 <p class="card-text">Dog Name: {{session.dog.name}}</p>
-                                                <p class="card-text">Trainer Name: {{session.user.username}}</p>
+                                                <p class="card-text">Trainer Name: {{session.dog.trainer.name}}</p>
                                                 <div class="row pictures">
                                                     <img class="picture" src="{{ url_for('static', filename='images/dog_try.jpg') }}" alt="">
                                                     <img class="picture" src="{{ url_for('static', filename='images/member_try.jpg') }}" alt="">
