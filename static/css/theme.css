@@ -663,6 +663,14 @@ img.picture{
     background-color: #2A9D8F;
 }
 
+.bg-interested{
+    background-color:#E9C46A;
+}
+
+.bg-maybe{
+    background-color: #264653;
+}
+
 .session-form{
     padding: 1.25rem !important;
 }
@@ -794,4 +802,40 @@ img.picture{
     background-color: black;
 }
 
+.not-outlined{
+    outline: 0;
+}
 
+
+/** popup **/
+
+.popup{
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 30vh;
+    background-color: white;
+    box-shadow: 0 -0.5rem 0.5rem 0 rgba(0,0,0,0.25);
+    border-top-left-radius: 0.5rem;
+    border-top-right-radius: 0.5rem;
+}
+
+.popup .row{
+    justify-content: center;
+}
+
+.popup .row:nth-child(1){
+    padding-top: 3.5rem;
+}
+
+.popup .sample p{
+    text-align: center;
+    position: absolute;
+    bottom: 1rem;
+}
+
+.popup .sample .sample-box{
+    display: flex;
+    justify-content: center;
+}
