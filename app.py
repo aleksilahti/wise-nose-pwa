@@ -6,7 +6,7 @@ from datetime import datetime
 app = Flask("Wise Nose PWA")
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.engine import Engine
-from sqlalchemy import event, or_
+from sqlalchemy import event, or_, and_
 from sqlalchemy.exc import IntegrityError
 from flask_login import LoginManager, login_user, current_user, logout_user, login_required, UserMixin
 from flask_bcrypt import Bcrypt
@@ -260,24 +260,71 @@ def session_info(id):
 
 @app.route("/sessions/create", methods=["GET", "POST"])
 def create_session():
-    return "create session"
+    if current_user.is_authenticated:
+        form = SessionForm()
+        form.dog.choices = [(g.id, g.name) for g in Dog.query.order_by('name')]
+        form.supervisor.choices = [(g.id, g.name) for g in Person.query.order_by('name').filter(or_(Person.role==2, Person.role==3))]
+        if form.validate_on_submit():
+            session = Session(user_id=current_user.id, supervisor_id=form.supervisor.data, dog_id=form.dog.data, created=form.date.data, number_of_samples=form.number_of_samples.data)
+            db.session.add(session)
+            db.session.commit()
+            flash('Session created!', 'success')
+            return redirect(url_for('sessions'))
+        return render_template('sessions_create.html', form=form)
+    return redirect(url_for('login'))
 
 @app.route("/sessions/edit/<int:id>", methods=["GET", "POST"])
 def edit_session(id):
-    #NOT FINISHED
-    #print(request.form.getlist("samples[]"))
-    s = Session.query.filter_by(id=id).first()
-    s.created = datetime.strptime(request.form["date"], "%d/%m/%Y %H:%M")
-    s.dog_id = request.form["dog"]
-    s.user_id = request.form["trainer"]
-    s.supervisor_id = request.form["supervisor"]
-    s.number_of_samples = request.form["number_of_samples"]
-    db.session.commit()
-    return "delete session" + str(id)
+    if current_user.is_authenticated:       
+        new_samples = request.form.getlist("samples[]")
+        old_samples = Sample.query.filter_by(session_id=id).order_by("number_in_session").all()
+
+        s = db.session.query(Session).get(id)
+        setattr(s, "created", datetime.strptime(request.form["date"], "%d/%m/%Y %H:%M"))
+        setattr(s, "dog_id", request.form["dog"])
+        setattr(s, "user_id", current_user.id)
+        setattr(s, "supervisor_id", request.form["supervisor"])
+        setattr(s, "number_of_samples", request.form["number_of_samples"])
+
+        diff = len(new_samples) - len(old_samples)
+        if(diff > 0):
+            for i in range(len(new_samples)-diff, len(new_samples)):
+                if(new_samples[i] == 'true'):
+                    val = 1
+                else:
+                    val = 0
+                s = Sample(added_by=current_user.id,is_correct=val,session_id=id,number_in_session=i)
+                db.session.add(s)
+        else:
+            for i in range(len(old_samples)-1, len(old_samples)+diff-1, -1):
+                db.session.query(Sample).filter(and_(Sample.session_id == id, Sample.number_in_session == old_samples[i].number_in_session)).delete()
+                old_samples.pop()
+        #db.session.commit()
+
+        #old_samples = Sample.query.filter_by(session_id=id).order_by("number_in_session").all()
+        for idx in range(len(old_samples)):
+            if(new_samples[idx] == 'true'):
+                val = 1
+            else:
+                val = 0
+            setattr(old_samples[idx], "is_correct", val)
+            setattr(old_samples[idx], "number_in_session", idx)     
+        db.session.commit()
+        flash('Session modified!', 'success')
+        return redirect(url_for('sessions'))
+    return redirect(url_for('login'))
 
 @app.route("/sessions/delete/<int:id>", methods=["GET", "POST"])
 def delete_session(id):
-    return "delete session" + str(id)
+    if current_user.is_authenticated:
+        session = Session.query.filter_by(id=id).first()
+        samples = Sample.query.filter_by(session_id=id).all()
+        db.session.query(Sample).filter_by(session_id=id).delete()
+        db.session.query(Session).filter_by(id=id).delete()
+        db.session.commit()
+        flash('Session deleted!', 'success')
+        return redirect(url_for('sessions'))
+    return redirect(url_for('login'))
 
 @app.route("/sessions/execute/<int:id>", methods=["GET", "POST"])
 def execute_session(id):
@@ -290,15 +337,14 @@ def execute_session(id):
 def modify_session(id):
     if current_user.is_authenticated:
         form = SessionForm()
-        print("test")
-        print(form.validate_on_submit())
-        if form.validate_on_submit():
-            print(form.date.data)
         session = Session.query.filter_by(id=id).first()
+        print(session.number_of_samples)
+        samples = Sample.query.filter_by(session_id=session.id).all()
         form.dog.choices = [(g.id, g.name) for g in Dog.query.order_by('name')]
-        form.trainer.choices = [(g.id, g.name) for g in Person.query.order_by('name').filter(or_(Person.role==1, Person.role==3))]
+        form.dog.default = session.dog.id
         form.supervisor.choices = [(g.id, g.name) for g in Person.query.order_by('name').filter(or_(Person.role==2, Person.role==3))]
-        return render_template('sessions_modify.html', session=session, form=form)
+        form.supervisor.default = session.supervisor.id
+        return render_template('sessions_modify.html', session=session, samples=samples ,form=form)
     return redirect(url_for('login'))
 
 @app.route("/sessions/review/<int:id>")

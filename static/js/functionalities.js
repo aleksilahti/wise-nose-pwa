@@ -22,7 +22,12 @@ $(document).ready(function(){
 
 
      $("#number_of_samples").on("input", function(){
-          let nbr_samples = parseInt($(this).val())
+          var nbr_samples = 0
+          if((parseInt($(this).val()) < 10 && parseInt($(this).val()) >=0) || ($(this).val() == "")){
+               nbr_samples = parseInt($(this).val())
+          }else{
+               $(this).val(0)
+          }
           $(".samples").empty()
           for(i = 0 ; i< nbr_samples; i++){
                $(".samples").append("<div class='sample'><p>"+(i+1)+"</p><div class='sample-box bg-not-hot'></div></div>")
@@ -61,6 +66,18 @@ $(document).ready(function(){
                }
           })
      })
+     //initalize samples when edit session
+     $("#number_of_samples").trigger("input")
+     if (typeof samp !== 'undefined'){
+          for([key, item] of Object.entries(samp)){
+               sampleList = $(".sample-box").not(".add")
+               if(item.is_hot == 1){
+                    $(sampleList[key]).removeClass("bg-not-hot")
+                    $(sampleList[key]).addClass("bg-hot")
+               }
+          }
+     }
+
      var order = 1
      $(".sample-box").not(":last-child").on("click", function(e){
           e.stopPropagation()
@@ -181,12 +198,12 @@ function save(id){
      });
      $.post("/sessions/edit/"+id, 
      {    
-          "id": id,
           "date": $("#date").val(),
           "dog": $("#dog").val(),
-          "trainer": $("#trainer").val(),
           "supervisor": $("#supervisor").val(),
           "number_of_samples": $("#number_of_samples").val(),
           "samples": samples
+     }).done(function(){
+          window.location.replace("/sessions")
      })
 }

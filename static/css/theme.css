@@ -807,6 +807,7 @@ img.picture{
 .sample-container.execute .sample-box p {
     left: 0;
     color: white;
+    width: fit-content;
 }
 
 .sample-box p.active  {

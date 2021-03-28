@@ -62,6 +62,6 @@ class MemberForm(FlaskForm):
 class SessionForm(FlaskForm):
     date = DateTimeField('Date', validators=[DataRequired()],format='%d/%m/%Y %H:%M')
     dog = SelectField('Dog', coerce=int, validators=[DataRequired()], default=1)
-    trainer = SelectField('Trainer', coerce=int, default=1)
     supervisor = SelectField('Supervisor', coerce=int, default=1)
     number_of_samples = IntegerField('Number of samples', validators=[DataRequired(), NumberRange(min=0, max=9)])
+    submit = SubmitField('Create session')
