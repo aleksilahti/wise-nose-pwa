@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<title>Sessions</title>
+{% endblock %}
+
+{% block body %}
+<div class="row session">
+    <div class="col sessions-tabs">
+        <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+            <a class="nav-link active" id="v-pills-planned-tab" data-toggle="pill" href="#v-pills-planned" role="tab" aria-controls="v-pills-planned" aria-selected="true">Planned</a>
+            <a class="nav-link" id="v-pills-done-tab" data-toggle="pill" href="#v-pills-done" role="tab" aria-controls="v-pills-done" aria-selected="false">Done</a>
+        </div>
+    </div>
+    <div class="col-10">
+        <div class="row row-cols-1 align-items-stretch">
+            <div class="tab-content" id="v-pills-tabContent">
+                <div class="tab-pane fade show active" id="v-pills-planned" role="tabpanel" aria-labelledby="v-pills-planned-tab">
+                    {% for session in sessions %}
+                        {% if session.completed == none%}
+                            <div class="col mb-4 session-container">
+                                <div class="card bg-blue-sessions">
+                                    <div class="row no-gutters">
+                                        <div class="col-md-4 date">
+                                            <h3 class="text-uppercase">{{session.created.strftime("%A")}}</h3>
+                                            <p class="date-format">{{session.created.strftime("%d/%m/%Y")}}</p>
+                                            <p class="time-location-format"><i class="fas fa-clock fa-sm"></i> {{session.created.strftime("%H:%M")}} - <i class="fas fa-map-marker fa-sm"></i> test4</p>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <div class="card-body">
+                                                <p class="card-text">Dog Name: {{session.dog.name}}</p>
+                                                <p class="card-text">Trainer Name: {{session.dog.trainer.name}}</p>
+                                                <div class="row pictures">
+                                                    <img class="picture" src="{{ url_for('static', filename='images/dog_try.jpg') }}" alt="">
+                                                    <img class="picture" src="{{ url_for('static', filename='images/member_try.jpg') }}" alt="">
+                                                </div>
+                                                {% if current_user.admin %}
+                                                    <div class="row action-buttons-sessions">
+                                                        <a href="{{ url_for('execute_session', id=session.id) }}" class="btn action-button bg-contrast-blue"><i class="fas fa-play fa-lg"></i></a>
+                                                        <a href="{{ url_for('modify_session', id=session.id) }}" class="btn action-button bg-contrast-blue"><i class="fas fa-pen fa-lg"></i></a>
+                                                        <button type"button" class="btn action-button bg-contrast-blue" data-toggle="modal" data-target="#staticBackdrop{{session.id}}"><i class="fas fa-trash fa-lg"></i></button>
+                                                    </div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+                <div class="tab-pane fade" id="v-pills-done" role="tabpanel" aria-labelledby="v-pills-done-tab">
+                    {% for session in sessions %}
+                        {% if session.completed != none%}
+                            <div class="col mb-4 session-container">
+                                <div class="card bg-green-sessions">
+                                    <div class="row no-gutters">
+                                        <div class="col-md-4 date">
+                                            <h3 class="text-uppercase">{{session.completed.strftime("%a")}}</h3>
+                                            <p class="date-format">{{session.completed.strftime("%d/%m/%Y")}}</p>
+                                            <p class="time-location-format"><i class="fas fa-clock fa-sm"></i> {{session.completed.strftime("%H:%M")}} - <i class="fas fa-map-marker fa-sm"></i> test4</p>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <div class="card-body">
+                                                <p class="card-text">Dog Name: {{session.dog.name}}</p>
+                                                <p class="card-text">Trainer Name: {{session.dog.trainer.name}}</p>
+                                                <div class="row pictures">
+                                                    <img class="picture" src="{{ url_for('static', filename='images/dog_try.jpg') }}" alt="">
+                                                    <img class="picture" src="{{ url_for('static', filename='images/member_try.jpg') }}" alt="">
+                                                </div>
+                                                {% if current_user.admin %}
+                                                    <div class="row action-buttons-sessions">
+                                                        <a href="{{ url_for('modify_session', id=session.id) }}" class="btn action-button bg-contrast-blue"><i class="fas fa-pen fa-lg"></i></a>
+                                                        <button type"button" class="btn action-button bg-contrast-blue" data-toggle="modal" data-target="#staticBackdrop{{session.id}}"><i class="fas fa-trash fa-lg"></i></button>
+                                                    </div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<a href="{{ url_for('create_session') }}" class="fab-material bg-deep-blue btn"><i class="fas fa-plus fa-lg"></i></a>
+{% endblock %}
+
+{% block modal %}
+{% for session in sessions %}
+    <div class="modal fade" id="staticBackdrop{{session.id}}" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Delete this session ?</h5>
+                </button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to delete it?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+                <a type="button" href="{{ url_for('delete_session', id=session.id) }}" class="btn btn-primary">Yes</a>
+            </div>
+            </div>
+        </div>
+    </div>         
+{% endfor%}
+
+{% endblock %}

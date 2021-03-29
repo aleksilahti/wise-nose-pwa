@@ -1,9 +1,8 @@
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
 from wtforms.validators import DataRequired, Email, EqualTo, ValidationError, Length, NumberRange
-from wtforms import StringField, SubmitField, PasswordField, BooleanField, RadioField, IntegerField, SelectField
 from app import User, Person, Session, Sample, photos
-
+from wtforms import StringField, SubmitField, PasswordField, BooleanField, RadioField, IntegerField , SelectField,DateTimeField
 
 class LoginForm(FlaskForm):
 	username = StringField('Username', validators=[DataRequired()])
@@ -60,6 +59,7 @@ class MemberForm(FlaskForm):
     name = StringField('Full name', validators=[Length(min=1, max=100)])
     role = RadioField('Member Role', coerce=int, default=1, choices=[(1,'Trainer'),(2,'Supervisor'), (3,'Trainer/Supervisor')])
     wise_nose_id = StringField('Wise Nose ID', validators=[Length(min=0, max=100)])
+
     photo = FileField('Member photo', validators=[FileAllowed(['png', 'jpg', 'jpeg', 'gif'], 'Images only!')])
     submit = SubmitField('Add member')
 
@@ -72,3 +72,10 @@ class DogForm(FlaskForm):
     trainer = SelectField('Trainer name', validators=[DataRequired()], coerce=int)
 
     submit = SubmitField('Save dog')
+
+class SessionForm(FlaskForm):
+    date = DateTimeField('Date', validators=[DataRequired()],format='%d/%m/%Y %H:%M')
+    dog = SelectField('Dog', coerce=int, validators=[DataRequired()], default=1)
+    supervisor = SelectField('Supervisor', coerce=int, default=1)
+    number_of_samples = IntegerField('Number of samples', validators=[DataRequired(), NumberRange(min=0, max=9)])
+    submit = SubmitField('Create session')

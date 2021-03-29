@@ -1,23 +1,59 @@
 {% extends 'base.html' %}
 
 {% block head %}
+<title>Account</title>
 {% endblock %}
 
 {% block body %}
-<div class="container">
-  <h2 class="page-header">{{ user.name }}</h2>
-  <div class="container">
-    <ul class="list-group">
-      <li class="list-group-item">Username: {{ user.username }}</li>
-      <li class="list-group-item">Email: {{ user.email }}</li>
-      <li class="list-group-item">Organization: {{ user.organization }}</li>
-      <li scope="col">Admin: {{ user.admin }}</li>
-    </ul>
+  <div class="account">
+    <div class="row">
+      <h1>Account</h1>
+    </div>
+    <div class="row">
+      <p class="text-muted">Update your profile and set your account preferences.</p>
+    </div>
+    <div class="row">
+      <div class="card mb-3 col-10 account-info-container" >
+        <div class="row no-gutters">
+          <div class="col-md-4">
+            <div class="list-group" id="list-tab" role="tablist">
+              <a class="list-group-item list-group-item-action active" id="list-general-list" data-toggle="list" href="#list-general" role="tab" aria-controls="general">General</a>
+              <a class="list-group-item list-group-item-action" id="list-reset-pwd-list" data-toggle="list" href="#list-reset-pwd" role="tab" aria-controls="reset-pwd">Reset password</a>
+              <a class="list-group-item list-group-item-action" id="list-delete-user-list" data-toggle="list" href="#list-delete-user" role="tab" aria-controls="delete-user">Delete user</a>
+            </div>
+          </div>
+          <div class="col-md-8">
+            <div class="tab-content" id="nav-tabContent">
+              <div class="tab-pane fade show active" id="list-general" role="tabpanel" aria-labelledby="list-general-list">
+                <div class="card-body">
+                  {% if user.name != none %}
+                    <h5 class="card-title username">{{ user.username }}</h5>
+                    <p class="card-text"><small class="text-muted">Name: {{user.name}}</small></p>
+                  {% else %}
+                    <h5 class="card-title">{{ user.username }}</h5>
+                  {% endif %}
+                  <p class="card-text">Email:<span class="font-italic"> {{ user.email }}</span></p>
+                  <p class="card-text">Organization:<span class="font-italic"> {{ user.organization }}</span></p>
+                  <p class="card-text">Admin:<span class="font-italic"> {{ user.admin }}</span></p>
+                </div>
+              </div>
+              <div class="tab-pane fade" id="list-reset-pwd" role="tabpanel" aria-labelledby="list-reset-pwd-list">
+                <div class="card-body">
+                  <h5 class="card-title">Reset password</h5>
+                  <a href="{{ url_for('change_pw', user_id=user.id) }}" class="btn btn-primary action-user">Reset password</a>
+                </div>
+              </div>
+              <div class="tab-pane fade" id="list-delete-user" role="tabpanel" aria-labelledby="list-delete-user-list">
+                <div class="card-body">
+                  <h5 class="card-title">Delete User</h5>
+                  <p class="card-text">Delete your account and all the data associated permanently.</p>
+                  <a href="{{ url_for('delete_user', user_id=user.id) }}" class="btn btn-danger action-user">Delete user</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
-  <br>
-  <div class="btn-group">
-    <a type="button" href="{{ url_for('change_pw', user_id=user.id) }}" class="btn btn-primary">Reset password</a>
-    <a type="button" href="{{ url_for('delete_user', user_id=user.id) }}" class="btn btn-danger">Delete user</a>
-  </div>
-</div>
 {% endblock %}

@@ -1,14 +1,19 @@
+
 from operator import or_
 
-from flask import Flask, render_template, redirect, request, url_for, flash, session
+from flask import Flask, render_template, redirect, request, url_for, flash, session, send_file
 import os
+import zipfile
 import email_validator
 from werkzeug.utils import secure_filename
+from datetime import datetime
+import json
+from sqlalchemy.ext.hybrid import hybrid_property
 
 app = Flask("Wise Nose PWA")
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.engine import Engine
-from sqlalchemy import event
+from sqlalchemy import event, or_, and_
 from sqlalchemy.exc import IntegrityError
 from flask_login import LoginManager, login_user, current_user, logout_user, login_required, UserMixin
 from flask_bcrypt import Bcrypt
@@ -87,10 +92,18 @@ class Sample(db.Model):
     is_correct = db.Column(db.Integer, nullable=False)  # Boolean value 1 or 0
     session_id = db.Column(db.Integer, db.ForeignKey("session.id", ondelete="SET NULL"), nullable=True)
     number_in_session = db.Column(db.Integer, nullable=True)
-    dog_answer = db.Column(db.String(144), nullable=True)
+    _dog_answer = db.Column('dog_answer',db.String(255), nullable=False, default='[]', server_default='[]')
 
     session = db.relationship("Session", back_populates="samples")
     user = db.relationship("User", back_populates="samples")
+
+    @hybrid_property
+    def dog_answer(self):
+        return json.loads(self._dog_answer)
+
+    @dog_answer.setter
+    def dog_answer(self, answer):
+        self._dog_answer = json.dumps(answer).encode('utf-8')
 
 class Contact(db.Model):
     id = db.Column(db.Integer, primary_key=True, nullable=False)
@@ -343,32 +356,119 @@ def delete_sample(id):
 # Sessions routes, create/edit/delete, execute/modify/review (success?)
 @app.route("/sessions")
 def sessions():
-    return "sessions"
+    if current_user.is_authenticated:
+        sessions = Session.query.all()
+        return render_template('sessions_list.html', sessions=sessions)
+    return redirect(url_for('login'))
 
 @app.route("/sessions/<int:id>")
 def session_info(id):
-    return "person" + str(id)
+    return "create session"
 
 @app.route("/sessions/create", methods=["GET", "POST"])
 def create_session():
-    return "create session"
+    if current_user.is_authenticated:
+        form = SessionForm()
+        form.dog.choices = [(g.id, g.name) for g in Dog.query.order_by('name')]
+        form.supervisor.choices = [(g.id, g.name) for g in Person.query.order_by('name').filter(or_(Person.role==2, Person.role==3))]
+        if form.validate_on_submit():
+            session = Session(user_id=current_user.id, supervisor_id=form.supervisor.data, dog_id=form.dog.data, created=form.date.data, number_of_samples=form.number_of_samples.data)
+            db.session.add(session)
+            db.session.commit()
+            flash('Session created!', 'success')
+            return redirect(url_for('sessions'))
+        return render_template('sessions_create.html', form=form)
+    return redirect(url_for('login'))
 
 @app.route("/sessions/edit/<int:id>", methods=["GET", "POST"])
 def edit_session(id):
-    return "edit session" + str(id)
+    if current_user.is_authenticated:       
+        new_samples = request.form.getlist("samples[]")
+        old_samples = Sample.query.filter_by(session_id=id).order_by("number_in_session").all()
+
+        s = db.session.query(Session).get(id)
+        setattr(s, "created", datetime.strptime(request.form["date"], "%d/%m/%Y %H:%M"))
+        setattr(s, "dog_id", request.form["dog"])
+        setattr(s, "user_id", current_user.id)
+        setattr(s, "supervisor_id", request.form["supervisor"])
+        setattr(s, "number_of_samples", request.form["number_of_samples"])
+
+        diff = len(new_samples) - len(old_samples)
+        if(diff > 0):
+            for i in range(len(new_samples)-diff, len(new_samples)):
+                if(new_samples[i] == 'true'):
+                    val = 1
+                else:
+                    val = 0
+                s = Sample(added_by=current_user.id,is_correct=val,session_id=id,number_in_session=i)
+                db.session.add(s)
+        else:
+            for i in range(len(old_samples)-1, len(old_samples)+diff-1, -1):
+                db.session.query(Sample).filter(and_(Sample.session_id == id, Sample.number_in_session == old_samples[i].number_in_session)).delete()
+                old_samples.pop()
+        #db.session.commit()
+
+        #old_samples = Sample.query.filter_by(session_id=id).order_by("number_in_session").all()
+        for idx in range(len(old_samples)):
+            if(new_samples[idx] == 'true'):
+                val = 1
+            else:
+                val = 0
+            setattr(old_samples[idx], "is_correct", val)
+            setattr(old_samples[idx], "number_in_session", idx)     
+        db.session.commit()
+        flash('Session modified!', 'success')
+        return redirect(url_for('sessions'))
+    return redirect(url_for('login'))
 
 @app.route("/sessions/delete/<int:id>", methods=["GET", "POST"])
 def delete_session(id):
-    return "delete session" + str(id)
-
+    if current_user.is_authenticated:
+        session = Session.query.filter_by(id=id).first()
+        samples = Sample.query.filter_by(session_id=id).all()
+        db.session.query(Sample).filter_by(session_id=id).delete()
+        db.session.query(Session).filter_by(id=id).delete()
+        db.session.commit()
+        flash('Session deleted!', 'success')
+        return redirect(url_for('sessions'))
+    return redirect(url_for('login'))
 
 @app.route("/sessions/execute/<int:id>", methods=["GET", "POST"])
 def execute_session(id):
-    return "execute session" + str(id)
+    if current_user.is_authenticated:
+        samp = []
+        samples = Sample.query.filter_by(session_id=id).order_by("number_in_session").all()
+        if request.json:
+            samples = Sample.query.filter_by(session_id=id).order_by("number_in_session").all()
+            for idx in range(len(samples)):
+                setattr(samples[idx], "dog_answer", request.json['samples'][idx])
+            db.session.commit()
+        else:
+            for idx in range(len(samples)):
+                tmp = []
+                for s in samples[idx].dog_answer:
+                    if(s[1] != ''):
+                        tmp.append([s[0], int(s[1])])
+                    else:
+                        tmp.append([s[0], -1])
+                samp.append(tmp)
+        session = Session.query.filter_by(id=id).first()
+        return render_template('session_execute.html', session=session, samples=samp)
+    return redirect(url_for('login'))
 
 @app.route("/sessions/modify/<int:id>", methods=["GET", "POST"])
 def modify_session(id):
-    return "modify session" + str(id)
+    if current_user.is_authenticated:
+        form = SessionForm()
+        session = Session.query.filter_by(id=id).first()
+        print(session.number_of_samples)
+        samples = Sample.query.filter_by(session_id=session.id).all()
+        form.dog.choices = [(g.id, g.name) for g in Dog.query.order_by('name')]
+        form.dog.default = session.dog.id
+        form.supervisor.choices = [(g.id, g.name) for g in Person.query.order_by('name').filter(or_(Person.role==2, Person.role==3))]
+        form.supervisor.default = session.supervisor.id
+        return render_template('sessions_modify.html', session=session, samples=samples ,form=form)
+    return redirect(url_for('login'))
 
 @app.route("/sessions/review/<int:id>")
 def review_session(id):
@@ -384,7 +484,7 @@ def account():
 @app.route("/export")
 def export():
     if current_user.is_authenticated:
-        return render_template('account.html', user=current_user)
+        return render_template('exportdatabase.html')
     return redirect(url_for('login'))
 
 @app.route("/users")
@@ -431,7 +531,8 @@ def create_user(contact_id):
                 contact_request = Contact.query.filter_by(id=contact_id).first()
                 pw = generate_pw()
                 hashed_pw = bcrypt.generate_password_hash(pw).decode('utf-8')
-                user = User(name=contact_request.name, username=contact_request.username, email=contact_request.email, pw_hash=hashed_pw)
+                user = User(name=contact_request.name, username=contact_request.username, email=contact_request.email,
+                            pw_hash=hashed_pw)
                 db.session.add(user)
                 db.session.commit()
                 # remove pw from this message and replace with email sent to the user email
@@ -499,12 +600,54 @@ def contact():
                                username=form.username.data,
                                email=form.email.data,
                                organization=form.organization.data,
+                               message = form.message.data
                                )
         db.session.add(contact_request)
         db.session.commit()
         flash('Access request sent!', 'success')
         return redirect(url_for('home'))
     return render_template('contact.html', form=form)
+
+
+# Database -> csv
+@app.route("/database/export", methods=["GET"])
+def download_all_files():
+    if current_user.is_authenticated:
+        create_csv(Dog.query.all(), "dogs.csv")
+        create_csv(Session.query.all(), "sessions.csv")
+        create_csv(Sample.query.all(), "samples.csv")
+        create_csv(Person.query.all(), "people.csv")
+
+        zipf = zipfile.ZipFile('data.zip', 'w', zipfile.ZIP_DEFLATED)
+        for root, dirs, files in os.walk('data/'):
+            for file in files:
+                zipf.write('data/' + file)
+        zipf.close()
+        return send_file('data.zip',
+                         mimetype='zip',
+                         attachment_filename='data.zip',
+                         as_attachment=True)
+    return redirect(url_for('login'))
+
+
+def create_csv(data, file_basename):
+    w_file = open("data/" + file_basename, 'w+')
+
+    json_data = [{c.name: getattr(i, c.name) for c in i.__table__.columns} for i in data]
+
+    if len(json_data) == 0:
+        return
+
+    # write header to the csv-file
+    w_file.write(", ".join(json_data[0].keys()) + '\n')
+
+    # write values to the csv-file
+    for row in json_data:
+        print(row.values())
+        w_file.write(", ".join([str(j) for j in row.values()]) + '\n')
+
+    w_file.close()
+
 
 # PWA
 @app.route('/service-worker.js')

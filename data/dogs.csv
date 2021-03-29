@@ -1,0 +1,9 @@
+id, trainer_id, name, wise_nose_id, age
+1, None, Lucky, 010, 5
+2, None, Name1, 123, 5
+3, None, Name1, 124, 5
+4, None, new, 123345, 10
+5, None, new, 1233456, 10
+6, None, new, 12334567, 10
+7, None, new, 0, 10
+8, None, 123, 123123123, 496

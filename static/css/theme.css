@@ -3,7 +3,7 @@
 }
 
 .bg-light-blue{
-    background-color: rgba(87,151,178,0.35);
+    background-color: rgba(87, 151, 178, 0.35);
 }
 
 .bg-dark-blue{
@@ -16,7 +16,18 @@
 
 .bg-contrast-white{
     background-color: rgba(255,255,255,0.45);
+}
 
+.bg-green{
+    background-color: #2A9D8F;
+}
+
+.bg-green-sessions{
+    background-color: rgba(42,157,143,0.6);
+}
+
+.bg-blue-sessions{
+    background-color: rgba(87,151,178,0.8);
 }
 
 body{
@@ -272,6 +283,14 @@ So different display format
     bottom: 0;
     right: 1rem;
 }
+
+.action-buttons-sessions{
+    position: absolute;
+    bottom: 1rem;
+    right: 2rem;
+    flex-direction: row;
+}
+
 .action-buttons-members{
     position: absolute;
     align-self: center;
@@ -349,5 +368,535 @@ So different display format
     margin-bottom: 0;
     bottom: 0;
     font-size: 0.75rem;
+}
+
+/** Account page **/
+
+.account{
+    padding-top: 5rem;
+}
+
+.account .row{
+    justify-content: center;
+}
+
+.account .row:nth-child(2){
+    margin-bottom: 5rem;
+    text-align: center;
+}
+
+.account h1{
+    font-weight: bold;
+}
+
+.account-info-container{
+    padding: 0;
+}
+
+.account-info-container .list-group{
+    border-radius: calc(.25rem - 1px) calc(.25rem - 1px) 0 0 ;
+}
+
+.account-info-container .list-group-item{
+    border: 0;
+}
+
+.account-info-container .col-md-8{
+    min-height: 20rem;
+    border-top: 1px solid rgba(0,0,0,.125);
+}
+@media (min-width: 768px){
+    .account-info-container .list-group{
+        border-radius: calc(.25rem - 1px) 0 0 calc(.25rem - 1px);
+    }
+    
+    .account-info-container .col-md-8{
+        border: 0;
+        border-left: 1px solid rgba(0,0,0,.125);
+    }
+}
+
+.account-info-container .list-group-item.active{
+    background-color: #2A9D8F;
+}
+
+.btn.action-user{
+    position: absolute;
+    bottom: 1rem;
+    right: 1rem;
+}
+
+.card-title.username{
+    margin: 0;
+}
+
+/** User page and also used in accessrequests **/
+
+
+.user{
+    padding-top: 5rem;
+}
+
+.user .row h1{
+    font-weight: bold;
+}
+
+.user .row{
+    justify-content: center;
+}
+
+.user .row:nth-child(2){
+    margin-bottom: 5rem;
+    text-align: center;
+}
+
+.user-info-container{
+    padding: 0;
+}
+
+.user-info-container .card-body{
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+}
+
+.user-info-container .list-group-item{
+    border: 0;
+    color: white;
+    text-decoration: none;
+}
+
+.user-info-container .list-group{
+    border-radius: calc(.25rem - 1px) calc(.25rem - 1px) 0 0 ;
+    text-align: center;
+}
+
+.user-info-container .col-md-8{
+    border-top: 1px solid rgba(0,0,0,.125);
+}
+
+@media (min-width: 768px){
+    .user-info-container .list-group{
+        border-radius: calc(.25rem - 1px) 0 0 calc(.25rem - 1px);
+    }
+    
+    .user-info-container .col-md-8{
+        border: 0;
+        border-left: 1px solid rgba(0,0,0,.125);
+    }
+}
+
+/** Access requests page **/
+
+.access-request .list-group{
+    height: 100%;
+}
+
+.access-request .list-group-item{
+    height: 50%;
+}
+
+/** sessions page **/
+
+.sessions-tabs .nav-link.active{
+    background-color: #264653;
+}
+
+.sessions-tabs .nav-link{
+    color: #404040;
+}
+
+.session-container .card{
+    color: white;
+}
+
+.session{
+    justify-content: center;
+}
+
+.session-container .date{
+    padding: 1.25rem;
+    text-align: center;
+}
+
+.session-container .date-format{
+    padding-top: 0.75rem;
+}
+
+.session-container .time-location-format{
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+}
+
+@media (max-width: 991px){
+    .container{
+        width: 100vw;
+        max-width: 100vw;
+    }
+
+    .session{
+        width: 100vw;
+        max-width: 100vw;
+    }
+
+    .session .col-10{
+        margin-top: 3rem;
+    }
+    .sessions-tabs{
+        position: fixed;
+        top: 4.5rem;
+        z-index: 5;
+        margin-top: -1rem;
+        padding: 0;
+        margin-bottom: 2rem;
+    }
+
+    .sessions-tabs .nav{
+        flex-direction: row !important;
+        text-align: center;
+    }
+
+    .sessions-tabs .nav-link{
+        width: 50vw;
+        border-radius: 0;
+        background-color: #264653;
+        color: white;
+        border: 0;
+    }
+
+    .sessions-tabs .nav-link.active{
+        border-bottom: 0.2rem solid white;
+    }
+    
+    .pictures{
+        display: none;
+    }
+
+    .action-buttons-sessions{
+        margin: 0;
+        position: static;
+        justify-content: flex-end;
+    }
+}
+@media(min-width:768px){
+    .pictures{
+        display: flex;
+    }
+    .action-buttons-sessions{
+        position: absolute;
+    }
+}
+
+@media(min-width: 992px){
+    .container.\/sessions .sessions-tabs .nav{
+        position: fixed;
+        width: 9rem;
+    }
+
+}
+
+
+/** circle member/dog picture **/
+
+.picture{
+    display: flex;
+    margin: 0.25rem;
+    justify-content: center;
+    color: white;
+    border-radius: 50%;
+    width: 4rem;
+    height: 4rem;
+}
+
+img.picture{
+    align-self: center;
+    object-fit: cover;
+}
+
+/** sample based css **/ 
+
+.sample-container{
+    justify-content: center ;
+}
+
+.samples{
+    display: flex;
+    flex-direction: column;
+}
+
+.sample-box{
+    border-radius: 4px;
+    width: 4rem;
+    height: 4rem;
+    margin: 1rem;
+    outline: solid #B2B2B2;
+    outline-offset: 0.25rem;
+
+}
+
+@media(min-width:1024px){
+    .sample-box{
+        outline-style: auto;
+    }
+}
+
+.sample{
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+}
+
+.sample p{
+    margin: 0;
+    align-self: center;
+}
+
+.sample-box.add{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #E1E1E1;
+    outline: 0;
+    margin-left: 1.75rem;
+}
+
+.bg-not-hot{
+    background-color: #E24D28;
+}
+
+.bg-hot{
+    background-color: #2A9D8F;
+}
+
+.bg-interested{
+    background-color:#E9C46A;
+}
+
+.bg-maybe{
+    background-color: #264653;
+}
+
+.session-form{
+    padding: 1.25rem !important;
+}
+
+.session-info-container{
+    padding: 0;
+}
+
+.session-info-container .list-group-item:nth-child(2){
+    bottom: 0rem;
+    right: 0rem;
+}
+
+.session-info-container .list-group-item{
+    position: absolute;
+    width: fit-content;
+    border: 0;
+    background-color: #fff;
+    color: black;
+    z-index: 5;
+}
+
+.session-info-container .list-group-item.active{
+    display: none;
+}
+
+.session-info-container .list-group-item:nth-child(1){
+    bottom: 0rem;
+    left: 0rem;
+}
+
+.session-info-container .submit{
+    display: flex;
+    justify-content: flex-end;
+}
+
+.sample-container.execute .sample .outlined{
+    display: flex;
+    outline: solid #B2B2B2;
+    outline-offset: -0.5rem;
+}
+
+@media(min-width:1024px){
+    .sample-container.execute .sample .outlined{
+        outline-style: auto;
+    }
+}
+
+.sample-container.execute .sample-box{
+    outline: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.sample-container.execute .sample-box.active{
+    border: 0.25rem solid black;
+    box-shadow: 0.25rem 0.25rem 0.25rem 0 rgba(0,0,0,0.25);
+}
+
+.sample-container.execute .sample-box.add{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #E1E1E1;
+    outline: 0;
+    margin: 1rem;
+}
+
+.sample-container.execute .sample{
+    justify-content: flex-start;
+}
+
+.user.execute .row:nth-child(1), .user.execute .row:nth-child(2){
+    display: none;
+}
+
+@media(min-width:1024px){
+
+    .user.execute .row:nth-child(1), .user.execute .row:nth-child(2){
+        display: flex;
+    }
+
+    .sample-container.execute{
+        justify-content: center !important;
+        margin-top: 1rem;
+    }
+    .sample-container.execute .samples{
+        flex-direction: row;
+    }
+
+    .sample-container.execute .sample{
+        justify-content: flex-start;
+        flex-direction: column;
+        margin: 0 0.5rem 0 0.5rem;
+    }
+
+    .sample-container.execute .sample .outlined{
+        flex-direction: column;
+        outline: solid #B2B2B2;
+        outline-offset: -0.5rem;
+        outline-style: auto;
+    }
+
+    .sample-container.execute .sample-box{
+        outline: 0;
+    }
+
+    .sample-container.execute .sample-box.add{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: #E1E1E1;
+        outline: 0;
+        margin: 1rem;
+    }
+
+    .sample-container.execute .sample p{
+        align-self: auto;
+        position: relative;
+        left: 50%;
+    }
+}
+
+.sample-container.execute .sample p{
+    width: 1rem;
+}
+.sample-container.execute .sample-box p {
+    left: 0;
+    color: white;
+    width: fit-content;
+}
+
+.sample-box p.active  {
+    display: none;
+}
+
+.sample-box:not(.add):not(:first-child):hover .active{
+    display: flex;
+    align-items: flex-end;
+    text-align: center;
+    justify-content: center;
+    text-align: center;
+    color:white;
+    position: relative;
+    left: calc(50% - 0.2rem);
+    top: calc(-50% + 0.2rem); 
+    width: 1.25rem;
+    height: 1.25rem;
+    border-radius: 50%;
+    background-color: black;
+}
+
+.not-outlined{
+    outline: 0;
+}
+
+
+/** popup **/
+
+.popup.active{
+    display: block;
+    bottom: 0;
+    box-shadow: 0 -0.5rem 0.5rem 0 rgba(0,0,0,0.25);
+    border-top-left-radius: 0.5rem;
+    border-top-right-radius: 0.5rem;
+}
+
+.popup{
+    position: fixed;
+    bottom: -30vh;
+    left: 0;
+    width: 100%;
+    height: 30vh;
+    background-color: white;
+    -webkit-transition: bottom 0.3s ease;
+    -moz-transition: bottom 0.3s ease;
+    -o-transition: bottom 0.3s ease;
+    transition: bottom 0.3s ease;
+}
+
+.popup .row{
+    justify-content: center;
+}
+
+.popup .row:nth-child(1){
+    padding-top: 3.5rem;
+}
+
+.popup .sample p{
+    text-align: center;
+    position: absolute;
+    bottom: 1rem;
+}
+
+.popup .sample .sample-box{
+    display: flex;
+    justify-content: center;
+    margin: 0.5rem;
+}
+
+@media(min-width:1024px){
+    .popup .sample .sample-box{
+        margin: 1rem;
+    }
+}
+
+.popup .col-1{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/** search bar **/ 
+@media(min-width:768px){
+    .search{
+        position: fixed;
+        top: 0.5rem;
+        right: 0;
+        z-index: 3000;
+    }
 }
 

@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<title>Session {{session.id}}</title>
+{% endblock %}
+
+{% block body %}
+<div class="user execute">
+    <div class="row">
+      <h1>Execute Session</h1>
+    </div>
+    <div class="row">
+      <p class="text-muted">Mark the dog interest in samples.</p>
+    </div>
+    <div class="row sample-container execute">
+        <div class="samples">
+            {% for i in range(1, session.number_of_samples+1) %}
+                <div class='sample'>
+                    <p>{{i}}</p>
+                    <div class="outlined">
+                        <div class='sample-box bg-not-hot'><p class="order"></p></div>
+                        <div class='sample-box add'><i class='fas fa-plus fa-lg'></i></div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+      </div>
+</div>
+<div class="popup">
+    <div class="row justify-content-around">
+        <div class="col-1" id="previous"><i class="fas fa-chevron-left"></i></div>
+        <div class="col-6 col-md-6 col-lg-4">
+            <label class="sr-only" for="order">Order</label>
+            <div class="input-group mb-2">
+              <div class="input-group-prepend">
+                <button id="minus" class="input-group-text">-</button>
+              </div>
+              <input type="text" class="form-control" id="order" placeholder="Order">
+              <div class="input-group-append">
+                <button id="add" class="input-group-text">+</button>
+              </div>
+            </div>
+        </div>
+        <div class="col-1" id="next"><i class="fas fa-chevron-right"></i></div>
+    </div>
+    <div class="row">
+        <div class='sample'>
+            <div class='sample-box bg-not-hot not-outlined' id="no"><p>No</p></div>
+        </div>
+        <div class='sample'>
+            <div class='sample-box bg-interested not-outlined' id="interested"><p>Interested</p></div>
+        </div>
+        <div class='sample'>
+            <div class='sample-box bg-maybe not-outlined' id="maybe"><p>Maybe</p></div>
+        </div>
+        <div class='sample'>
+            <div class='sample-box bg-hot not-outlined' id="yes"><p>Yes</p></div>
+        </div>
+    </div>
+</div>
+<button onclick="save_execute({{session.id}})" class="fab-material bg-deep-blue btn"><i class="fas fa-save fa-lg"></i></button>
+{% endblock %}
+{% block script %}
+  <script>
+    var dog_answer = {
+      {% for sample in samples %}
+        "{{loop.index}}":{
+         "order": {{sample}},
+       },
+      {% endfor %}
+    }
+  </script>
+{% endblock %}
