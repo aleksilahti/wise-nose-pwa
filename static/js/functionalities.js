@@ -66,6 +66,7 @@ $(document).ready(function(){
                }
           })
      })
+     var order = 1
 
      //initalize samples when edit session
      $("#number_of_samples").trigger("input")
@@ -106,6 +107,7 @@ $(document).ready(function(){
                          }
                          if(item["order"][idx][1] != -1){
                               $($(childrens[idx]).children()[0]).text(item["order"][idx][1])
+                              order += 1
                          }
                     }
                })
@@ -113,7 +115,6 @@ $(document).ready(function(){
      }
 
      //execute session logic
-     var order = 1
      $(".sample-box").not(":last-child").on("click", function(e){
           e.stopPropagation()
           $(".sample-box.active").removeClass("active")
@@ -273,7 +274,7 @@ function save_execute(id){
           data: JSON.stringify({samples}),
           contentType: 'application/json; charset=utf-8',
           dataType: 'json',
-          async: false
+          async: true
      }).done(function(){
           console.log("a")
           window.location.replace("/sessions")
