@@ -20,7 +20,7 @@ $(document).ready(function(){
           }
      })
 
-
+     // create the number of boxes according the number from the input #number_of_samples
      $("#number_of_samples").on("input", function(){
           var nbr_samples = 0
           if((parseInt($(this).val()) < 10 && parseInt($(this).val()) >=0) || ($(this).val() == "")){
@@ -66,6 +66,7 @@ $(document).ready(function(){
                }
           })
      })
+
      //initalize samples when edit session
      $("#number_of_samples").trigger("input")
      if (typeof samp !== 'undefined'){
@@ -78,6 +79,40 @@ $(document).ready(function(){
           }
      }
 
+     //initalize samples when executing session
+     if (typeof dog_answer !== 'undefined'){
+          sampleList = $(".sample .outlined")
+          for([key, item] of Object.entries(dog_answer)){
+               childrens = $(sampleList[key-1]).children().not('.add')
+               for(i=0; i<item['order'].length-1; i++){
+                    childrens.last().after("<div class='sample-box bg-not-hot'><p class='order'></p><p class='active'>-</p></div>")
+               }
+               childrens = $(sampleList[key-1]).children().not('.add')
+               childrens.toArray().forEach(function(_, idx){
+                    if(item["order"].length != 0){
+                         switch (item["order"][idx][0]){
+                              case 1: 
+                                   $(childrens[idx]).removeClass("bg-not-hot")
+                                   $(childrens[idx]).addClass("bg-interested")
+                                   break;
+                              case 2:
+                                   $(childrens[idx]).removeClass("bg-not-hot")
+                                   $(childrens[idx]).addClass("bg-maybe")
+                                   break;
+                              case 3:
+                                   $(childrens[idx]).removeClass("bg-not-hot")
+                                   $(childrens[idx]).addClass("bg-hot")
+                                   break;
+                         }
+                         if(item["order"][idx][1] != -1){
+                              $($(childrens[idx]).children()[0]).text(item["order"][idx][1])
+                         }
+                    }
+               })
+          }
+     }
+
+     //execute session logic
      var order = 1
      $(".sample-box").not(":last-child").on("click", function(e){
           e.stopPropagation()
@@ -138,6 +173,7 @@ $(document).ready(function(){
           $(this).parent().children().not(":last-child").last().children().last().on("click", function(e){
                e.stopPropagation()
                $(this).parent().remove()
+               order -= 1
                $(".popup").removeClass("active")
           })
      })
@@ -185,6 +221,7 @@ $(document).ready(function(){
      })
 })
 
+// js form for the session edit page
 function save(id){
      var samples = [] // false --> not hot / true --> hot
      $(".sample").toArray().forEach(function(_, index){
@@ -204,6 +241,41 @@ function save(id){
           "number_of_samples": $("#number_of_samples").val(),
           "samples": samples
      }).done(function(){
+          window.location.replace("/sessions")
+     })
+}
+
+//js form for the session execute page
+function save_execute(id){
+     var samples = []
+     actualBoxes = $(".sample .outlined").toArray()
+     actualBoxes.forEach(function(_, index){
+          childrens = $(actualBoxes[index]).children()
+          samples.push([])
+          childrens.toArray().forEach(function(_, child_index){
+               if(!$(childrens[child_index]).hasClass("add")){
+                    console.log()
+                    if($(childrens[child_index]).hasClass("bg-not-hot")){ //not-hot = 0, interested = 1, maybe=2, yes = 3
+                         samples[index].push([0, $($(childrens[child_index]).children()[0]).text()])
+                    }else if($(childrens[child_index]).hasClass("bg-interested")){
+                         samples[index].push([1, $($(childrens[child_index]).children()[0]).text()])
+                    }else if ($(childrens[child_index]).hasClass("bg-interested")){
+                         samples[index].push([2, $($(childrens[child_index]).children()[0]).text()])
+                    }else{
+                         samples[index].push([3, $($(childrens[child_index]).children()[0]).text()])
+                    }
+               }
+          })
+     })
+     $.ajax({
+          url: "/sessions/execute/"+id,
+          type: 'POST',
+          data: JSON.stringify({samples}),
+          contentType: 'application/json; charset=utf-8',
+          dataType: 'json',
+          async: false
+     }).done(function(){
+          console.log("a")
           window.location.replace("/sessions")
      })
 }

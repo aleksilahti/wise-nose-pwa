@@ -58,4 +58,16 @@
         </div>
     </div>
 </div>
+<button onclick="save_execute({{session.id}})" class="fab-material bg-deep-blue btn"><i class="fas fa-save fa-lg"></i></button>
+{% endblock %}
+{% block script %}
+  <script>
+    var dog_answer = {
+      {% for sample in samples %}
+        "{{loop.index}}":{
+         "order": {{sample}},
+       },
+      {% endfor %}
+    }
+  </script>
 {% endblock %}

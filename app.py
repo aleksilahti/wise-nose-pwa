@@ -2,6 +2,8 @@ from flask import Flask, render_template, redirect, request, url_for, flash, ses
 import os
 import email_validator
 from datetime import datetime
+import json
+from sqlalchemy.ext.hybrid import hybrid_property
 
 app = Flask("Wise Nose PWA")
 from flask_sqlalchemy import SQLAlchemy
@@ -76,10 +78,18 @@ class Sample(db.Model):
     is_correct = db.Column(db.Integer, nullable=False)  # Boolean value 1 or 0
     session_id = db.Column(db.Integer, db.ForeignKey("session.id", ondelete="SET NULL"), nullable=True)
     number_in_session = db.Column(db.Integer, nullable=True)
-    dog_answer = db.Column(db.String(144), nullable=True)
+    _dog_answer = db.Column('dog_answer',db.String(255), nullable=False, default='[]', server_default='[]')
 
     session = db.relationship("Session", back_populates="samples")
     user = db.relationship("User", back_populates="samples")
+
+    @hybrid_property
+    def dog_answer(self):
+        return json.loads(self._dog_answer)
+
+    @dog_answer.setter
+    def dog_answer(self, answer):
+        self._dog_answer = json.dumps(answer).encode('utf-8')
 
 class Contact(db.Model):
     id = db.Column(db.Integer, primary_key=True, nullable=False)
@@ -329,8 +339,24 @@ def delete_session(id):
 @app.route("/sessions/execute/<int:id>", methods=["GET", "POST"])
 def execute_session(id):
     if current_user.is_authenticated:
+        samp = []
+        samples = Sample.query.filter_by(session_id=id).order_by("number_in_session").all()
+        if request.json:
+            samples = Sample.query.filter_by(session_id=id).order_by("number_in_session").all()
+            for idx in range(len(samples)):
+                setattr(samples[idx], "dog_answer", request.json['samples'][idx])
+            db.session.commit()
+        else:
+            for idx in range(len(samples)):
+                tmp = []
+                for s in samples[idx].dog_answer:
+                    if(s[1] != ''):
+                        tmp.append([s[0], int(s[1])])
+                    else:
+                        tmp.append([s[0], -1])
+                samp.append(tmp)
         session = Session.query.filter_by(id=id).first()
-        return render_template('session_execute.html', session=session)
+        return render_template('session_execute.html', session=session, samples=samp)
     return redirect(url_for('login'))
 
 @app.route("/sessions/modify/<int:id>", methods=["GET", "POST"])
