@@ -59,8 +59,8 @@ class MemberForm(FlaskForm):
     name = StringField('Full name', validators=[Length(min=1, max=100)])
     role = RadioField('Member Role', coerce=int, default=1, choices=[(1,'Trainer'),(2,'Supervisor'), (3,'Trainer/Supervisor')])
     wise_nose_id = StringField('Wise Nose ID', validators=[Length(min=0, max=100)])
-
     photo = FileField('Member photo', validators=[FileAllowed(['png', 'jpg', 'jpeg', 'gif'], 'Images only!')])
+
     submit = SubmitField('Add member')
 
 
@@ -70,6 +70,7 @@ class DogForm(FlaskForm):
     age = IntegerField('Dog age', validators=[NumberRange(min=0, max=20, message='Invalid length'), DataRequired()])
     wise_nose_id = StringField('Wise Nose ID', validators=[Length(min=0, max=100)])
     trainer = SelectField('Trainer name', validators=[DataRequired()], coerce=int)
+    photo = FileField('Dog photo', validators=[FileAllowed(['png', 'jpg', 'jpeg', 'gif'], 'Images only!')])
 
     submit = SubmitField('Save dog')
 

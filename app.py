@@ -67,6 +67,7 @@ class Dog(db.Model):
     name = db.Column(db.String(128), nullable=True)
     wise_nose_id = db.Column(db.String(128), nullable=True)
     age = db.Column(db.Integer, nullable=True)
+    photo = db.Column(db.String(128))
 
     sessions = db.relationship("Session", back_populates="dog")
     trainer = db.relationship("Person", back_populates="dogs")
@@ -203,12 +204,21 @@ def add_dog():
     form.submit.label.text = "Add new dog"
 
     if form.validate_on_submit():
-        new_dog = Dog(name=form.name.data, age=form.age.data, wise_nose_id=form.wise_nose_id.data,
-                      trainer_id=form.trainer.data)
-        db.session.add(new_dog)
-        db.session.commit()
-        flash('Dog created!', 'success')
-        return redirect(url_for('dogs'))
+        if request.method == "POST" and request.files:
+            image = request.files["photo"]
+            if image.filename != '':
+                filename = secure_filename(image.filename)
+                location = os.path.join(app.config["UPLOADED_PHOTOS_DEST"], filename)
+                image.save(location)
+                file_url = filename
+            else:
+                file_url = 'dog_try.jpg'
+            new_dog = Dog(name=form.name.data, age=form.age.data, wise_nose_id=form.wise_nose_id.data,
+                          trainer_id=form.trainer.data, photo=file_url)
+            db.session.add(new_dog)
+            db.session.commit()
+            flash('Dog created!', 'success')
+            return redirect(url_for('dogs'))
     return render_template('newdog.html', form=form)
 
 @app.route("/dogs/edit/<int:id>", methods=["GET", "POST"])
@@ -224,20 +234,31 @@ def edit_dog(id):
     form.submit.label.text = "Save"
 
     if form.validate_on_submit():
-        dog.name = form.name.data
-        dog.age = form.age.data
-        dog.wise_nose_id = form.wise_nose_id.data
-        dog.trainer_id = int(form.trainer.data)
-        db.session.commit()
-        flash('Dog\'s information saved!', 'success')
-        return redirect(url_for('dogs'))
+        if request.method == "POST" and request.files:
+            image = request.files["photo"]
+            if image.filename != '':
+                filename = secure_filename(image.filename)
+                location = os.path.join(app.config["UPLOADED_PHOTOS_DEST"], filename)
+                image.save(location)
+                file_url = filename
+            else:
+                file_url = 'dog_try.jpg'
+
+            dog.name = form.name.data
+            dog.age = form.age.data
+            dog.wise_nose_id = form.wise_nose_id.data
+            dog.trainer_id = int(form.trainer.data)
+            dog.photo = file_url
+            db.session.commit()
+            flash('Dog\'s information saved!', 'success')
+            return redirect(url_for('dogs'))
 
     form.name.data = dog.name
     form.age.data = dog.age
     form.wise_nose_id.data = dog.wise_nose_id
     form.trainer.data = dog.trainer_id
 
-    return render_template('newdog.html', form=form)
+    return render_template('editdog.html', form=form, id=str(id))
 
 @app.route("/dogs/delete/<int:id>", methods=["GET", "POST"])
 def delete_dog(id):
@@ -269,26 +290,24 @@ def add_member():
         return redirect(url_for('home'))
     form = MemberForm()
     form.header = "Add new member"
-    file_url = None
 
     if form.validate_on_submit():
         if request.method == "POST" and request.files:
             image = request.files["photo"]
-            print(image.filename)
             if image.filename != '':
                 filename = secure_filename(image.filename)
                 location = os.path.join(app.config["UPLOADED_PHOTOS_DEST"], filename)
                 image.save(location)
                 file_url = filename
             else:
-                file_url = 'dog_standart.png'
+                file_url = 'person.png'
             person = Person(name=form.name.data, role=form.role.data, wise_nose_id=form.wise_nose_id.data, photo=file_url)
 
             db.session.add(person)
             db.session.commit()
             flash('Member created!', 'success')
             return redirect(url_for('members'))
-    return render_template('newmember.html', form=form, file_url=file_url)
+    return render_template('newmember.html', form=form)
 
 @app.route("/persons/edit/<int:id>", methods=["GET", "POST"])
 def edit_member(id):
@@ -301,18 +320,30 @@ def edit_member(id):
     form.submit.label.text = "Save"
 
     if form.validate_on_submit():
-        member.name = form.name.data
-        member.role = form.role.data
-        member.wise_nose_id = form.wise_nose_id.data
-        db.session.commit()
-        flash('Member\'s information updated!', 'success')
-        return redirect(url_for('members'))
+        if request.method == "POST" and request.files:
+            image = request.files["photo"]
+            if image.filename != '':
+                filename = secure_filename(image.filename)
+                location = os.path.join(app.config["UPLOADED_PHOTOS_DEST"], filename)
+                image.save(location)
+                file_url = filename
+            else:
+                file_url = 'person.png'
+
+            member.name = form.name.data
+            member.role = form.role.data
+            member.wise_nose_id = form.wise_nose_id.data
+            member.photo = file_url
+            db.session.commit()
+            flash('Member\'s information updated!', 'success')
+            return redirect(url_for('members'))
 
     form.name.data = member.name
     form.role.data = member.role
     form.wise_nose_id.data = member.wise_nose_id
+    form.photo.data = member.photo
 
-    return render_template('newmember.html', form=form)
+    return render_template('editmember.html', form=form, id=str(id))
 
 
 @app.route("/members/delete/<int:id>", methods=["GET", "POST"])
