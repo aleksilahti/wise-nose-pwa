@@ -889,3 +889,14 @@ img.picture{
     justify-content: center;
     align-items: center;
 }
+
+/** search bar **/ 
+@media(min-width:768px){
+    .search{
+        position: fixed;
+        top: 0.5rem;
+        right: 0;
+        z-index: 3000;
+    }
+}
+
