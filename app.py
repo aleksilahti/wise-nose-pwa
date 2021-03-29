@@ -1,6 +1,9 @@
+from operator import or_
+
 from flask import Flask, render_template, redirect, request, url_for, flash, session
 import os
 import email_validator
+from werkzeug.utils import secure_filename
 
 app = Flask("Wise Nose PWA")
 from flask_sqlalchemy import SQLAlchemy
@@ -9,13 +12,21 @@ from sqlalchemy import event
 from sqlalchemy.exc import IntegrityError
 from flask_login import LoginManager, login_user, current_user, logout_user, login_required, UserMixin
 from flask_bcrypt import Bcrypt
+from flask_uploads import UploadSet, configure_uploads, IMAGES
+
+basedir = os.path.abspath(os.path.dirname(__file__))
 SECRET_KEY = os.urandom(32)
 app.config['SECRET_KEY'] = SECRET_KEY
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///test.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+app.config['UPLOADED_PHOTOS_DEST'] = 'static/images'
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
 login_manager = LoginManager(app)
+
+photos = UploadSet('photos', IMAGES)
+configure_uploads(app, photos)
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -40,6 +51,7 @@ class Person(db.Model):
     name = db.Column(db.String(128), nullable=True)
     wise_nose_id = db.Column(db.String(128), nullable=True)
     role = db.Column(db.Integer, nullable=True)
+    photo = db.Column(db.String(128))
 
     sessions = db.relationship("Session", back_populates="supervisor")
     dogs = db.relationship("Dog", back_populates="trainer")
@@ -87,6 +99,7 @@ class Contact(db.Model):
     email = db.Column(db.String(256), nullable=False)
     organization = db.Column(db.String(256), nullable=True)
     message = db.Column(db.String(256), nullable=True)
+
 
 @event.listens_for(Engine, "connect")
 def set_sqlite_pragma(dbapi_connection, connection_record):
@@ -167,15 +180,63 @@ def dog(id):
 
 @app.route("/dogs/add", methods=["GET", "POST"])
 def add_dog():
-    return "add person"
+    if not current_user.is_authenticated:
+        return redirect(url_for('home'))
+    form = DogForm()
+    form.header = 'Add new dog'
+    form.trainer.choices = [(g.id, g.name) for g in
+                            Person.query.order_by('name').filter(or_(Person.role == 1, Person.role == 3))]
+
+    form.submit.label.text = "Add new dog"
+
+    if form.validate_on_submit():
+        new_dog = Dog(name=form.name.data, age=form.age.data, wise_nose_id=form.wise_nose_id.data,
+                      trainer_id=form.trainer.data)
+        db.session.add(new_dog)
+        db.session.commit()
+        flash('Dog created!', 'success')
+        return redirect(url_for('dogs'))
+    return render_template('newdog.html', form=form)
 
 @app.route("/dogs/edit/<int:id>", methods=["GET", "POST"])
 def edit_dog(id):
-    return "edit person" + str(id)
+    if not current_user.is_authenticated:
+        return redirect(url_for('home'))
+
+    dog = db.session.query(Dog).filter_by(id=id).first()
+    form = DogForm()
+    form.header = 'Edit dog'
+    form.trainer.choices = [(g.id, g.name) for g in
+                            Person.query.order_by('name').filter(or_(Person.role == 1, Person.role == 3))]
+    form.submit.label.text = "Save"
+
+    if form.validate_on_submit():
+        dog.name = form.name.data
+        dog.age = form.age.data
+        dog.wise_nose_id = form.wise_nose_id.data
+        dog.trainer_id = int(form.trainer.data)
+        db.session.commit()
+        flash('Dog\'s information saved!', 'success')
+        return redirect(url_for('dogs'))
+
+    form.name.data = dog.name
+    form.age.data = dog.age
+    form.wise_nose_id.data = dog.wise_nose_id
+    form.trainer.data = dog.trainer_id
+
+    return render_template('newdog.html', form=form)
 
 @app.route("/dogs/delete/<int:id>", methods=["GET", "POST"])
 def delete_dog(id):
-    return "delete person" + str(id)
+    if current_user.is_authenticated:
+        if current_user.admin:
+            db.session.query(Dog).filter_by(id=id).delete()
+            db.session.commit()
+            flash('Dog deleted!', 'success')
+            return redirect(url_for('dogs'))
+        flash('You lack the credentials to access this page!', 'danger')
+        return redirect(url_for('home'))
+    return redirect(url_for('login'))
 
 # Member routes
 @app.route("/members")
@@ -194,25 +255,59 @@ def add_member():
     if not current_user.is_authenticated:
         return redirect(url_for('home'))
     form = MemberForm()
+    form.header = "Add new member"
+    file_url = None
+
     if form.validate_on_submit():
-        person = Person(name=form.name.data, role=form.role.data, wise_nose_id=form.wise_nose_id.data)
-        db.session.add(person)
-        db.session.commit()
-        flash('Member created!', 'success')
-        return redirect(url_for('members'))
-    return render_template('newmember.html', form=form)
+        if request.method == "POST" and request.files:
+            image = request.files["photo"]
+            print(image.filename)
+            if image.filename != '':
+                filename = secure_filename(image.filename)
+                location = os.path.join(app.config["UPLOADED_PHOTOS_DEST"], filename)
+                image.save(location)
+                file_url = filename
+            else:
+                file_url = 'dog_standart.png'
+            person = Person(name=form.name.data, role=form.role.data, wise_nose_id=form.wise_nose_id.data, photo=file_url)
+
+            db.session.add(person)
+            db.session.commit()
+            flash('Member created!', 'success')
+            return redirect(url_for('members'))
+    return render_template('newmember.html', form=form, file_url=file_url)
 
 @app.route("/persons/edit/<int:id>", methods=["GET", "POST"])
 def edit_member(id):
-    return "edit person" + str(id)
+    if not current_user.is_authenticated:
+        return redirect(url_for('home'))
+
+    member = db.session.query(Person).filter_by(id=id).first()
+    form = MemberForm()
+    form.header = 'Edit member'
+    form.submit.label.text = "Save"
+
+    if form.validate_on_submit():
+        member.name = form.name.data
+        member.role = form.role.data
+        member.wise_nose_id = form.wise_nose_id.data
+        db.session.commit()
+        flash('Member\'s information updated!', 'success')
+        return redirect(url_for('members'))
+
+    form.name.data = member.name
+    form.role.data = member.role
+    form.wise_nose_id.data = member.wise_nose_id
+
+    return render_template('newmember.html', form=form)
+
 
 @app.route("/members/delete/<int:id>", methods=["GET", "POST"])
 def delete_member(id):
     if current_user.is_authenticated:
         if current_user.admin:
             try:
-                person = Person.query.filter_by(id=id).first()
-                db.session.delete(person)
+                db.session.query(Person).filter_by(id=id).delete()
                 db.session.commit()
                 flash('Member deleted', 'success')
                 return redirect(url_for('members'))
@@ -318,8 +413,7 @@ def deny_request(contact_id):
     if current_user.is_authenticated:
         if current_user.admin:
             try:
-                contact_request = Contact.query.filter_by(id=contact_id).first()
-                db.session.delete(contact_request)
+                db.session.query(Contact).filter_by(id=contact_id).delete()
                 db.session.commit()
                 flash('Request denied', 'success')
                 return redirect(url_for('access_requests'))
@@ -343,7 +437,7 @@ def create_user(contact_id):
                 # remove pw from this message and replace with email sent to the user email
                 message = 'Account created for {}, password is "{}"'.format(contact_request.username, pw)
                 flash(message, 'success')
-                db.session.delete(contact_request)
+                db.session.query(Contact).filter_by(id=contact_id).delete()
                 db.session.commit()
                 return redirect(url_for('access_requests'))
             except:
@@ -356,8 +450,7 @@ def create_user(contact_id):
 def delete_user(user_id):
     if current_user.is_authenticated:
         if current_user.admin or str(current_user.id) == str(user_id):
-            user = User.query.filter_by(id=user_id).first()
-            db.session.delete(user)
+            db.session.query(User).filter_by(id=user_id).delete()
             db.session.commit()
             flash('User deleted!', 'success')
             return redirect(url_for('home'))
@@ -413,7 +506,7 @@ def contact():
         return redirect(url_for('home'))
     return render_template('contact.html', form=form)
 
-# PWA 
+# PWA
 @app.route('/service-worker.js')
 def sw():
     return app.send_static_file('service-worker.js')
