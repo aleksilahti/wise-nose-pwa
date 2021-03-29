@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block head %}
+{% endblock %}
+
+{% block body %}
+<div class="container">
+    <h2 class="page-header">Export database to csv-files</h2>
+    <br>
+    <a type="button" href="{{ url_for('download_all_files')}}" class="btn btn-primary">Download</a>
+</div>
+{% endblock %}
