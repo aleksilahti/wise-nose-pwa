@@ -126,7 +126,7 @@ from forms import * # because in form we import User... so we need them to be in
 
 # Create default user (admin). Remove from use on deployment!
 try:
-    if not User.query.filter_by(username="admin"):
+    if User.query.filter_by(username="admin").first() is None:
         hashed_pw = bcrypt.generate_password_hash("admin").decode('utf-8')
         default_user = User(username='admin',email='test@email.com',pw_hash=hashed_pw,admin=True)
         db.session.add(default_user)
@@ -162,7 +162,7 @@ def login():
 def register():
     if not current_user.is_authenticated:
         return redirect(url_for('home'))
-    form = RegisterForm()
+    form = RegisterForm(request.form)
     if form.validate_on_submit():
         # Hash the password and insert the user in SQLAlchemy db
         hashed_pw = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
@@ -170,7 +170,7 @@ def register():
         db.session.add(user)
         db.session.commit()
         flash('Account created!', 'success')
-        return redirect(url_for('access_requests'))
+        return redirect(url_for('register'))
     return render_template('register.html', form=form)
 
 @app.route('/logout')
