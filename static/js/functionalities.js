@@ -66,7 +66,7 @@ $(document).ready(function(){
                }
           })
      })
-     var order = 1
+     let order = 1
 
      //initalize samples when edit session
      $("#number_of_samples").trigger("input")
@@ -105,6 +105,12 @@ $(document).ready(function(){
                                    $(childrens[idx]).addClass("bg-hot")
                                    break;
                          }
+                         $($(childrens[idx]).children()[1]).on("click", function(e){
+                              e.stopPropagation()
+                              $(this).parent().remove()
+                              order -= 1
+                              $(".popup").removeClass("active")
+                         })
                          if(item["order"][idx][1] != -1){
                               $($(childrens[idx]).children()[0]).text(item["order"][idx][1])
                               order += 1
@@ -124,7 +130,7 @@ $(document).ready(function(){
           if(sample.children().text() ==""){
                $("#order").val(order)
           }else{
-               $("#order").val(sample.children().text())
+               $("#order").val($(sample.children()[0]).text())
           }
      })
      $(".sample-box.not-outlined").on("click", function(){
@@ -260,7 +266,7 @@ function save_execute(id){
                          samples[index].push([0, $($(childrens[child_index]).children()[0]).text()])
                     }else if($(childrens[child_index]).hasClass("bg-interested")){
                          samples[index].push([1, $($(childrens[child_index]).children()[0]).text()])
-                    }else if ($(childrens[child_index]).hasClass("bg-interested")){
+                    }else if ($(childrens[child_index]).hasClass("bg-maybe")){
                          samples[index].push([2, $($(childrens[child_index]).children()[0]).text()])
                     }else{
                          samples[index].push([3, $($(childrens[child_index]).children()[0]).text()])
@@ -273,8 +279,7 @@ function save_execute(id){
           type: 'POST',
           data: JSON.stringify({samples}),
           contentType: 'application/json; charset=utf-8',
-          dataType: 'json',
-          async: true
+          async: false
      }).done(function(){
           console.log("a")
           window.location.replace("/sessions")

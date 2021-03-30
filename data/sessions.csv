@@ -1,0 +1,2 @@
+id, user_id, supervisor_id, dog_id, created, completed, result, number_of_samples
+1, 1, 1, 1, 2022-04-26 15:35:00, None, None, 3

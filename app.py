@@ -415,7 +415,7 @@ def create_session():
 def edit_session(id):
     if current_user.is_authenticated:       
         new_samples = request.form.getlist("samples[]")
-        old_samples = Sample.query.filter_by(session_id=id).order_by("number_in_session").all()
+        old_samples = db.session.query(Sample).filter_by(session_id=id).order_by("number_in_session").all()
 
         s = db.session.query(Session).get(id)
         setattr(s, "created", datetime.strptime(request.form["date"], "%d/%m/%Y %H:%M"))
@@ -455,8 +455,6 @@ def edit_session(id):
 @app.route("/sessions/delete/<int:id>", methods=["GET", "POST"])
 def delete_session(id):
     if current_user.is_authenticated:
-        session = Session.query.filter_by(id=id).first()
-        samples = Sample.query.filter_by(session_id=id).all()
         db.session.query(Sample).filter_by(session_id=id).delete()
         db.session.query(Session).filter_by(id=id).delete()
         db.session.commit()
@@ -470,7 +468,7 @@ def execute_session(id):
         samp = []
         samples = Sample.query.filter_by(session_id=id).order_by("number_in_session").all()
         if request.json:
-            samples = Sample.query.filter_by(session_id=id).order_by("number_in_session").all()
+            samples = db.session.query(Sample).filter_by(session_id=id).order_by("number_in_session").all()
             for idx in range(len(samples)):
                 setattr(samples[idx], "dog_answer", request.json['samples'][idx])
             db.session.commit()

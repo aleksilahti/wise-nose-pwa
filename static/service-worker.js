@@ -45,6 +45,7 @@ self.addEventListener('fetch', (evt) => {
   });
 
 // TODO test and check
+/*
 self.addEventListener('sync', (event) => {
   if (event.tag === 'create-session') {
     event.waitUntil(
@@ -70,4 +71,4 @@ self.addEventListener('sync', (event) => {
         clients.forEach(client => client.postMessage('outbox-processed'))
       })
     }
-});
+});*/
