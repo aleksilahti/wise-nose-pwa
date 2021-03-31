@@ -843,6 +843,7 @@ img.picture{
     box-shadow: 0 -0.5rem 0.5rem 0 rgba(0,0,0,0.25);
     border-top-left-radius: 0.5rem;
     border-top-right-radius: 0.5rem;
+    z-index: 10;
 }
 
 .popup{
