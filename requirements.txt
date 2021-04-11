@@ -30,4 +30,3 @@ WTForms==2.3.3
 zipp==3.4.0
 Flask-Uploads
 gunicorn
-python-dotenv
