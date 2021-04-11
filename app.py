@@ -1,6 +1,5 @@
 
 from operator import or_
-from config import *
 from flask import Flask, render_template, redirect, request, url_for, flash, session, send_file
 import os
 import zipfile
@@ -20,7 +19,7 @@ from flask_bcrypt import Bcrypt
 from flask_uploads import UploadSet, configure_uploads, IMAGES
 
 basedir = os.path.abspath(os.path.dirname(__file__))
-#SECRET_KEY = 
+SECRET_KEY = os.getenv('SECRET_KEY', None)
 app.config['SECRET_KEY'] = SECRET_KEY
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///test.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
