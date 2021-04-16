@@ -31,8 +31,8 @@
                                                 <p class="card-text">Dog Name: {{session.dog.name}}</p>
                                                 <p class="card-text">Trainer Name: {{session.dog.trainer.name}}</p>
                                                 <div class="row pictures">
-                                                    <img class="picture" src="{{ url_for('static', filename='images/dog_try.jpg') }}" alt="">
-                                                    <img class="picture" src="{{ url_for('static', filename='images/member_try.jpg') }}" alt="">
+                                                    <img class="picture" src="{{ url_for('static', filename='images/' + session.dog.photo) }}" alt="">
+                                                    <img class="picture" src="{{ url_for('static', filename='images/' + session.dog.trainer.photo) }}" alt="">
                                                 </div>
                                                 {% if current_user.admin %}
                                                     <div class="row action-buttons-sessions">
@@ -65,8 +65,8 @@
                                                 <p class="card-text">Dog Name: {{session.dog.name}}</p>
                                                 <p class="card-text">Trainer Name: {{session.dog.trainer.name}}</p>
                                                 <div class="row pictures">
-                                                    <img class="picture" src="{{ url_for('static', filename='images/dog_try.jpg') }}" alt="">
-                                                    <img class="picture" src="{{ url_for('static', filename='images/member_try.jpg') }}" alt="">
+                                                    <img class="picture" src="{{ url_for('static', filename='images/' + session.dog.photo) }}" alt="">
+                                                    <img class="picture" src="{{ url_for('static', filename='images/' + session.dog.trainer.photo) }}" alt="">
                                                 </div>
                                                 {% if current_user.admin %}
                                                     <div class="row action-buttons-sessions">

@@ -65,7 +65,8 @@
       {% for sample in samples %}
        "{{sample.number_in_session}}":{
          "is_hot": {{sample.is_correct}},
-         "number_in_session": {{sample.number_in_session}}
+         "number_in_session": {{sample.number_in_session}},
+         "wise_nose_id": "{{sample.wise_nose_id}}"
        },
       {% endfor %}
     }
