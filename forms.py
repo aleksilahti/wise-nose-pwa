@@ -71,6 +71,7 @@ class DogForm(FlaskForm):
     wise_nose_id = StringField('Wise Nose ID', validators=[Length(min=0, max=100)])
     trainer = SelectField('Trainer name', validators=[DataRequired()], coerce=int)
     photo = FileField('Dog photo', validators=[FileAllowed(['png', 'jpg', 'jpeg', 'gif'], 'Images only!')])
+    search = StringField()
 
     submit = SubmitField('Save dog')
 

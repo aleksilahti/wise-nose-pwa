@@ -1,6 +1,6 @@
 
 from operator import or_
-from flask import Flask, render_template, redirect, request, url_for, flash, session, send_file
+from flask import Flask, render_template, redirect, request, url_for, flash, session, send_file, jsonify
 import os
 import zipfile
 import email_validator
@@ -10,6 +10,7 @@ import json
 from sqlalchemy.ext.hybrid import hybrid_property
 
 app = Flask("Wise Nose PWA")
+from flask import session
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.engine import Engine
 from sqlalchemy import event, or_, and_
@@ -19,7 +20,7 @@ from flask_bcrypt import Bcrypt
 from flask_uploads import UploadSet, configure_uploads, IMAGES
 
 basedir = os.path.abspath(os.path.dirname(__file__))
-SECRET_KEY = os.getenv('SECRET_KEY', None)
+SECRET_KEY = os.urandom(32)
 app.config['SECRET_KEY'] = SECRET_KEY
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///test.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
@@ -180,12 +181,25 @@ def logout():
     return redirect(url_for('login'))
 
 # Dog routes
-@app.route("/dogs")
+@app.route("/dogs", methods=["GET", "POST"])
 def dogs():
     if current_user.is_authenticated:
         dogs = Dog.query.all()
+        if request.method == "POST":
+            search_data = request.data.decode('UTF-8')
+            if search_data != '':
+                session['dogs_search'] = search_data
+                return redirect(url_for('search_dogs', search_data=search_data))
         return render_template('dogs.html', dogs=dogs)
     return redirect(url_for('login'))
+
+@app.route('/dogs/search')
+def search_dogs():
+    search_data = request.args.get('search_data')
+    dogs_search = Dog.query.filter(Dog.name.contains(search_data)).all()
+    if len(dogs_search) == 0:
+        flash('Search result is empty')
+    return render_template("dogs.html", dogs=dogs_search)
 
 @app.route("/dogs/<int:id>")
 def dog(id):
@@ -272,12 +286,23 @@ def delete_dog(id):
     return redirect(url_for('login'))
 
 # Member routes
-@app.route("/members")
+@app.route("/members", methods=["GET", "POST"])
 def members():
     if current_user.is_authenticated:
+        if request.method == "POST":
+            search_data = request.data.decode('UTF-8')
+            return redirect(url_for('search_members', search_data=search_data))
         members = Person.query.all()
         return render_template('members.html', members=members)
     return redirect(url_for('login'))
+
+@app.route('/members/search')
+def search_members():
+    search_data = request.args.get('search_data')
+    members_search = Person.query.filter(Person.name.contains(search_data)).all()
+    if len(members_search) == 0:
+        flash('Search result is empty')
+    return render_template("members.html", members=members_search)
 
 @app.route("/members/<int:id>")
 def member(id):
@@ -384,12 +409,29 @@ def delete_sample(id):
 
 
 # Sessions routes, create/edit/delete, execute/modify/review (success?)
-@app.route("/sessions")
+@app.route("/sessions", methods=["GET", "POST"])
 def sessions():
     if current_user.is_authenticated:
+        if request.method == "POST":
+            search_data = request.data.decode('UTF-8')
+            return redirect(url_for('search_sessions', search_data=search_data))
         sessions = Session.query.all()
         return render_template('sessions_list.html', sessions=sessions)
     return redirect(url_for('login'))
+
+@app.route('/sessions/search')
+def search_sessions():
+    search_data = request.args.get('search_data')
+    sessions_search = Session.query.filter(
+        or_(
+            Session.dog.name.contains(search_data),
+            Session.supervisor.name.contains(search_data)
+        )
+    ).all()
+    if len(sessions_search) == 0:
+        flash('Search result is empty')
+    return render_template("sessions_list.html", sessions=sessions_search)
+
 
 @app.route("/sessions/<int:id>")
 def session_info(id):
@@ -489,7 +531,6 @@ def modify_session(id):
     if current_user.is_authenticated:
         form = SessionForm()
         session = Session.query.filter_by(id=id).first()
-        print(session.number_of_samples)
         samples = Sample.query.filter_by(session_id=session.id).all()
         form.dog.choices = [(g.id, g.name) for g in Dog.query.order_by('name')]
         form.dog.default = session.dog.id
@@ -641,10 +682,10 @@ def contact():
 @app.route("/database/export", methods=["GET"])
 def download_all_files():
     if current_user.is_authenticated:
-        create_csv(Dog.query.all(), "dogs.csv")
-        create_csv(Session.query.all(), "sessions.csv")
-        create_csv(Sample.query.all(), "samples.csv")
-        create_csv(Person.query.all(), "people.csv")
+        create_csv(db.session.query(Dog).all(), "dogs.csv")
+        create_csv(db.session.query(Session).all(), "sessions.csv")
+        create_csv(db.session.query(Sample).all(), "samples.csv")
+        create_csv(db.session.query(Person).all(), "people.csv")
 
         zipf = zipfile.ZipFile('data.zip', 'w', zipfile.ZIP_DEFLATED)
         for root, dirs, files in os.walk('data/'):
@@ -671,7 +712,6 @@ def create_csv(data, file_basename):
 
     # write values to the csv-file
     for row in json_data:
-        print(row.values())
         w_file.write(", ".join([str(j) for j in row.values()]) + '\n')
 
     w_file.close()

@@ -58,4 +58,19 @@
         </div>
     </div>         
 {% endfor%}
+
+<script>
+    window.addEventListener('do_search', function (e) {
+            fetch("/dogs", {
+                method: "POST",
+                body: e.detail
+            })
+            .then((response) => {
+                console.log(response);
+                if (response.url) {
+                    window.location.href = response.url;
+                }
+            })
+    }, false);
+</script>
 {% endblock %}
