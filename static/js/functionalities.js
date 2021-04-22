@@ -161,7 +161,7 @@ $(document).ready(function(){
 
      $(document).on("click", function(e){
           var $target = $(e.target);
-          if(!$target.closest('.popup').length && $('.popup').hasClass("active")) { //detect click outside the .popup div
+          if(!$target.closest('.popup').length && $('.popup').hasClass("active") && !$target.closest(".sample-box.add").length) { //detect click outside the .popup div
                $(".popup").removeClass("active")
                $(".sample-box.active").removeClass("active")
           }
@@ -172,6 +172,7 @@ $(document).ready(function(){
 
      $(".sample-box.add").on("click", function(){
           $(this).parent().children().not(":last-child").last().after("<div class='sample-box bg-not-hot'><p class='order'></p><p class='active'>-</p></div>")
+          console.log()
           $(this).parent().children().not(":last-child").last().on("click", function(e){
                e.stopPropagation()
                $(".sample-box.active").removeClass("active")
@@ -190,6 +191,7 @@ $(document).ready(function(){
                order -= 1
                $(".popup").removeClass("active")
           })
+          $(this).parent().children().not(":last-child").last().trigger("click")
      })
 
      $("#minus").on("click", function(){
