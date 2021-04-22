@@ -134,6 +134,13 @@ try:
 except IntegrityError:
     pass
 
+# Remove from use after stable version
+# No caching
+@app.after_request
+def add_header(response):
+    response.headers['Cache-Control'] = 'no-store'
+    return response
+
 # Home / Base URL
 @app.route("/")
 @app.route("/home")
