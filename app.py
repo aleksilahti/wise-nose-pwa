@@ -556,6 +556,39 @@ def export():
         return render_template('exportdatabase.html')
     return redirect(url_for('login'))
 
+@app.route("/exportdogs", methods=["GET", "POST"])
+def export_dogs():
+    if current_user.is_authenticated:
+        dogs = Dog.query.all()
+        trainers = Person.query.order_by('name').filter(or_(Person.role == 1, Person.role == 3)).all()
+
+        if request.method == "POST":
+            return redirect(url_for('search_export_dogs', data=request.data))
+
+        empty_search_data = {'name': '', 'age':'', 'id':'', 'trainer':''}
+        return render_template('exportdogs.html', dogs=dogs, trainers=trainers, search_data=empty_search_data)
+    return redirect(url_for('login'))
+
+@app.route('/exportdogs/search', methods=["GET", "POST"])
+def search_export_dogs():
+    if request.method == "POST":
+        return redirect(url_for('download_dogs', data=request.data))
+
+    data = json.loads(request.args.get('data'))
+    dogs_search = get_dog_search_results(data)
+
+    if len(dogs_search) == 0:
+        flash('Search result is empty')
+
+    dog_name = data['dog_name']
+    dog_age = data['age']
+    trainer_name = data['trainer_name']
+    wise_nose_id = data['wise_nose_id']
+
+    trainers = Person.query.order_by('name').filter(or_(Person.role == 1, Person.role == 3)).all()
+    search_data = {'name': dog_name, 'age': dog_age, 'id': wise_nose_id, 'trainer': trainer_name}
+    return render_template("exportdogs.html", dogs=dogs_search, trainers=trainers, search_data=search_data)
+
 @app.route("/users")
 def users():
     if current_user.is_authenticated:
@@ -678,6 +711,64 @@ def contact():
     return render_template('contact.html', form=form)
 
 
+def get_dog_search_results(data):
+    trainer_name = data['trainer_name']
+    dog_name = data['dog_name']
+    dog_age = data['age']
+    wise_nose_id = data['wise_nose_id']
+
+    dogs = db.session.query(Dog)
+    if dog_name != '':
+        dogs = dogs.filter(Dog.name.contains(dog_name))
+    if dog_age != '':
+        dogs = dogs.filter_by(age=dog_age)
+    if wise_nose_id != '':
+        dogs = dogs.filter_by(wise_nose_id=wise_nose_id)
+    if trainer_name != '':
+        trainer = db.session.query(Person).filter(Person.name == trainer_name).all()
+        if len(trainer) != 0:
+            dogs = dogs.filter_by(trainer_id=trainer[0].id)
+
+    return dogs.all()
+
+
+def get_member_search_results(data):
+    person_name = data['person_name']
+    role = data['role']
+    wise_nose_id = data['wise_nose_id']
+
+    members = db.session.query(Person)
+    if person_name != '':
+        members = members.filter(Person.name.contains(person_name))
+    if role != '':
+        members = members.filter_by(role=role)
+    if wise_nose_id != '':
+        members = members.filter_by(wise_nose_id=wise_nose_id)
+
+    return members.all()
+
+
+def get_session_search_results(data):
+    start_date = data['start_date']
+    end_date = data['end_date']
+    dog_name = data['dog_name']
+    supervisor_name = data['supervisor_name']
+    wise_nose_id = data['wise_nose_id']
+
+    session = db.session.query(Session)
+    # if dog_name != '':
+    #     session = session.filter(Dog.name.contains(dog_name))
+    # if dog_age != '':
+    #     session = session.filter_by(age=dog_age)
+    # if wise_nose_id != '':
+    #     session = session.filter_by(wise_nose_id=wise_nose_id)
+    # if trainer_name != '':
+    #     trainer = db.session.query(Person).filter(Person.name == trainer_name).all()
+    #     if len(trainer) != 0:
+    #         session = session.filter_by(trainer_id=trainer[0].id)
+
+    return session.all()
+
 # Database -> csv
 @app.route("/database/export", methods=["GET"])
 def download_all_files():
@@ -691,6 +782,22 @@ def download_all_files():
         for root, dirs, files in os.walk('data/'):
             for file in files:
                 zipf.write('data/' + file)
+        zipf.close()
+        return send_file('data.zip',
+                         mimetype='zip',
+                         attachment_filename='data.zip',
+                         as_attachment=True)
+    return redirect(url_for('login'))
+
+@app.route("/database/export/dogs", methods=["GET"])
+def download_dogs():
+    if current_user.is_authenticated:
+        print(request.args.get('data'))
+        data = json.loads(request.args.get('data'))
+        create_csv(get_dog_search_results(data), "dogs.csv")
+
+        zipf = zipfile.ZipFile('data.zip', 'w', zipfile.ZIP_DEFLATED)
+        zipf.write('data/dogs.csv')
         zipf.close()
         return send_file('data.zip',
                          mimetype='zip',

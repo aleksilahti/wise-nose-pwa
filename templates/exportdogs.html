@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% block head %}
+{% endblock %}
+
+{% block body %}
+
+<div class="container">
+	<label for="dog-name">Dog name
+		<input type="text" id="dog-name" placeholder="Dog name" class="form-control form-control-lg" value={{search_data.name}}>
+	</label>
+	<label for="age">Age
+    	<input type="text" id="age" placeholder="Age" style="width: 80px" class="form-control form-control-lg" value={{search_data.age}}>
+	</label>
+	<label for="wise-nose-id">Wise Nose ID
+    	<input type="text" id="wise-nose-id" placeholder="Wise Nose ID" class="form-control form-control-lg" value={{search_data.id}}>
+	</label>
+	<label for="trainer-name">Trainer name
+    	<select id="trainer-name" class="form-control form-control-lg">
+			<option hidden selected value={{search_data.trainer}}>{{search_data.trainer}}</option>
+			{% for trainer in trainers %}
+				<option>{{ trainer.name }}</option>
+			{% endfor %}
+		</select>
+	</label>
+
+	<br>
+	<div class="form-group">
+		<a type="button" onclick="handleSearchDog()" class="btn btn-outline-info">Get search results</a>
+	</div>
+	<br>
+
+	<table>
+		<tr>
+			<th>Name</th>
+			<th>Age</th>
+			<th>Wise Nose ID</th>
+			<th>Trainer</th>
+		</tr>
+			{% for dog in dogs %}
+			<tr>
+				<td>{{ dog.name }}</td>
+				<td>{{ dog.age }}</td>
+				<td>{{ dog.wise_nose_id }}</td>
+				<td>{{ dog.trainer.name }}</td>
+			</tr>
+			{% endfor %}
+	</table>
+
+	<br>
+
+	<a type="button" onclick="downloadDogsData	()" class="btn btn-primary">Download dogs</a>
+</div>
+
+
+{% endblock %}
+
+
+
