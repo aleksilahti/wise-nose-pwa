@@ -1,8 +1,8 @@
 {
-    "name": "Wise Nose PWA",
-    "short_name": "Wise Nose PWA",
-    "theme_color": "#b13254",
-    "background_color": "#ff5349",
+    "name": "Wise Nose",
+    "short_name": "Wise Nose",
+    "theme_color": "#264653",
+    "background_color": "#2A9D8F",
     "icons": [
       {
           "src": "/static/images/icon-64.png",

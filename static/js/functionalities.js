@@ -3,6 +3,7 @@ $(document).ready(function(){
      // background overlay when sidebar-menu displayed
      $(".navbar-toggler").on("click", function () {
           $(this).toggleClass("mask")
+          $(".search").toggleClass("none")
      })
 
      //active link
@@ -30,17 +31,18 @@ $(document).ready(function(){
           }
           $(".samples").empty()
           for(i = 0 ; i< nbr_samples; i++){
-               $(".samples").append("<div class='sample'><p>"+(i+1)+"</p><div class='sample-box bg-not-hot'></div></div>")
+               $(".samples").append("<div class='sample_and_search'><div class='sample'><p>"+(i+1)+"</p><div class='sample-box bg-not-hot'></div></div>  <div class='wise_nose_id'><input type='text' placeholder='ID' autocomplete='off' class='wise_nose_id_search'/></div></div>")
           }
           if(nbr_samples < 9){
                $(".samples").append("<div class='sample'><div class='sample-box add'><i class='fas fa-plus fa-lg'></i></div></div>")
           }
-
+          $(".wise_nose_id_search").on("input", search)
           $(".sample-box.add").on("click", function(){
                if(nbr_samples < 9){
                     nbr_samples += 1
                     $("#number_of_samples").val(nbr_samples)
-                    $(".sample").not(":last-child").last().after("<div class='sample'><p>"+(nbr_samples)+"</p><div class='sample-box bg-not-hot'></div></div>")
+                    $(".sample_and_search").not(":last-child").last().after("<div class='sample_and_search'><div class='sample'><p>"+nbr_samples+"</p><div class='sample-box bg-not-hot'></div></div>  <div class='wise_nose_id'><input type='text' placeholder='ID' autocomplete='off' class='wise_nose_id_search'/></div></div>")
+                    $(".wise_nose_id_search").on("input", search)
                     $(".sample").not(":last-child").last().children().on("click", function(){
                          if($(this).hasClass("bg-hot")){
                               $(this).removeClass("bg-hot")
@@ -73,10 +75,12 @@ $(document).ready(function(){
      if (typeof samp !== 'undefined'){
           for([key, item] of Object.entries(samp)){
                sampleList = $(".sample-box").not(".add")
+               sampleIDList = $(".wise_nose_id_search")
                if(item.is_hot == 1){
                     $(sampleList[key]).removeClass("bg-not-hot")
                     $(sampleList[key]).addClass("bg-hot")
                }
+               $(sampleIDList[key]).val(item.wise_nose_id)
           }
      }
 
@@ -157,14 +161,18 @@ $(document).ready(function(){
 
      $(document).on("click", function(e){
           var $target = $(e.target);
-          if(!$target.closest('.popup').length && $('.popup').hasClass("active")) { //detect click outside the .popup div
+          if(!$target.closest('.popup').length && $('.popup').hasClass("active") && !$target.closest(".sample-box.add").length) { //detect click outside the .popup div
                $(".popup").removeClass("active")
                $(".sample-box.active").removeClass("active")
+          }
+          if(!$target.closest('.wise_nose_id_search').length && !$target.closest('.wise_nose_id_answers').length) { //detect click outside the search field or answers
+               $(".wise_nose_id ul.wise_nose_id_answers").remove()
           }
      })
 
      $(".sample-box.add").on("click", function(){
           $(this).parent().children().not(":last-child").last().after("<div class='sample-box bg-not-hot'><p class='order'></p><p class='active'>-</p></div>")
+          console.log()
           $(this).parent().children().not(":last-child").last().on("click", function(e){
                e.stopPropagation()
                $(".sample-box.active").removeClass("active")
@@ -183,6 +191,7 @@ $(document).ready(function(){
                order -= 1
                $(".popup").removeClass("active")
           })
+          $(this).parent().children().not(":last-child").last().trigger("click")
      })
 
      $("#minus").on("click", function(){
@@ -226,11 +235,60 @@ $(document).ready(function(){
                newSample.trigger("click")
           }
      })
+
+     //search wise nose id samples 
+
+     function search(){
+          input =$(this) 
+          //$(".wise_nose_id ul.wise_nose_id_answers").children().remove()
+          if(input.val() == ""){
+               $(".wise_nose_id ul.wise_nose_id_answers").remove()
+          }else{
+               $.post("/samples/"+input.val()).done(function(result){
+                    $(".wise_nose_id ul.wise_nose_id_answers").children().remove()
+                    result = JSON.parse(result)
+                    if(input.val().length == 1){
+                         input.parent().append("<ul class='wise_nose_id_answers'></ul>")
+                    }
+                    if(result.length != 0){
+                         result.forEach(function(_, index){
+                              Object.keys(result[index]).forEach(function(key) {
+                                   input.parent().children().last().append("<li>"+key+"</li>") //add to ul element 
+                               });
+                         })
+                         li_samples_wise_nose_id = input.parent().children().last().children().toArray()
+                         li_samples_wise_nose_id.forEach(function(_,index){
+                              $(li_samples_wise_nose_id[index]).on("click", function(){
+                                   li_element = $(this)
+                                   input.val($(this).text())
+                                   $(".wise_nose_id ul.wise_nose_id_answers").remove()
+                                   result.forEach(function(_, index){
+                                        Object.keys(result[index]).forEach(function(key) {
+                                             if(key == li_element.text()){
+                                                  sample_box = input.parent().parent().children().first().children().last() // sample box linked to the li_element
+                                                  sample_box.removeClass()
+                                                  if(result[index][key] == 0){
+                                                       sample_box.addClass("sample-box bg-not-hot")
+                                                  }else{
+                                                       sample_box.addClass("sample-box bg-hot")
+                                                  }
+                                             }
+                                         });
+                                   })
+                              })
+                         })
+                    }else{
+                         $(".wise_nose_id ul.wise_nose_id_answers").remove()
+                    }
+               })
+          }
+     }
 })
 
 // js form for the session edit page
 function save(id){
      var samples = [] // false --> not hot / true --> hot
+     var samples_wise_id = []
      $(".sample").toArray().forEach(function(_, index){
           if(!$($(".sample").toArray()[index].children).hasClass("add")){
                if($($(".sample").toArray()[index].children).hasClass("bg-not-hot")){
@@ -238,6 +296,7 @@ function save(id){
                }else{
                     samples.push(true)
                }
+               samples_wise_id.push($($(".wise_nose_id_search").toArray()[index]).val())
           }
      });
      $.post("/sessions/edit/"+id, 
@@ -246,7 +305,8 @@ function save(id){
           "dog": $("#dog").val(),
           "supervisor": $("#supervisor").val(),
           "number_of_samples": $("#number_of_samples").val(),
-          "samples": samples
+          "samples": samples,
+          "samples_wise_id": samples_wise_id
      }).done(function(){
           window.location.replace("/sessions")
      })
@@ -261,7 +321,6 @@ function save_execute(id){
           samples.push([])
           childrens.toArray().forEach(function(_, child_index){
                if(!$(childrens[child_index]).hasClass("add")){
-                    console.log()
                     if($(childrens[child_index]).hasClass("bg-not-hot")){ //not-hot = 0, interested = 1, maybe=2, yes = 3
                          samples[index].push([0, $($(childrens[child_index]).children()[0]).text()])
                     }else if($(childrens[child_index]).hasClass("bg-interested")){
@@ -281,7 +340,6 @@ function save_execute(id){
           contentType: 'application/json; charset=utf-8',
           async: false
      }).done(function(){
-          console.log("a")
           window.location.replace("/sessions")
      })
 }

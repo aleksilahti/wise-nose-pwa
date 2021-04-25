@@ -1,6 +1,6 @@
 
 from operator import or_
-from flask import Flask, render_template, redirect, request, url_for, flash, session, send_file, jsonify
+from flask import Flask, render_template, redirect, request, url_for, flash, session, send_file
 import os
 import zipfile
 import email_validator
@@ -89,6 +89,7 @@ class Session(db.Model):
 
 class Sample(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    wise_nose_id = db.Column(db.String(120), nullable=True)
     added_by = db.Column(db.Integer, db.ForeignKey("user.id", ondelete="SET NULL"), nullable=True)
     is_correct = db.Column(db.Integer, nullable=False)  # Boolean value 1 or 0
     session_id = db.Column(db.Integer, db.ForeignKey("session.id", ondelete="SET NULL"), nullable=True)
@@ -133,6 +134,13 @@ try:
         db.session.commit()
 except IntegrityError:
     pass
+
+# Remove from use after stable version
+# No caching
+@app.after_request
+def add_header(response):
+    response.headers['Cache-Control'] = 'no-store'
+    return response
 
 # Home / Base URL
 @app.route("/")
@@ -391,13 +399,15 @@ def delete_member(id):
 def samples():
     return "people"
 
-@app.route("/samples/<int:id>")
+@app.route("/samples/<string:id>",methods=["GET", "POST"])
 def sample(id):
-    return "sample" + str(id)
+    samples =  Sample.query.filter(Sample.wise_nose_id.contains(id)).distinct(Sample.wise_nose_id).group_by(Sample.wise_nose_id).all()
+    samples = [{sample.wise_nose_id: sample.is_correct} for sample in samples]
+    return json.dumps(samples)
 
-@app.route("/samples/add", methods=["GET", "POST"])
-def add_sample():
-    return "add sample"
+#@app.route("/samples/add", methods=["GET", "POST"])
+#def add_sample():
+#    return "add sample"
 
 @app.route("/samples/edit/<int:id>", methods=["GET", "POST"])
 def edit_sample(id):
@@ -456,6 +466,7 @@ def create_session():
 def edit_session(id):
     if current_user.is_authenticated:       
         new_samples = request.form.getlist("samples[]")
+        new_samples_id = request.form.getlist("samples_wise_id[]")
         old_samples = db.session.query(Sample).filter_by(session_id=id).order_by("number_in_session").all()
 
         s = db.session.query(Session).get(id)
@@ -472,7 +483,10 @@ def edit_session(id):
                     val = 1
                 else:
                     val = 0
-                s = Sample(added_by=current_user.id,is_correct=val,session_id=id,number_in_session=i)
+                s = Sample(added_by=current_user.id,is_correct=val,session_id=id,number_in_session=i, wise_nose_id=new_samples_id[i])
+                eq_samples = db.session.query(Sample).filter_by(wise_nose_id=new_samples_id[i]).all()
+                for i in range(len(eq_samples)):
+                    setattr(eq_samples[i], "is_correct", val)
                 db.session.add(s)
         else:
             for i in range(len(old_samples)-1, len(old_samples)+diff-1, -1):
@@ -486,8 +500,12 @@ def edit_session(id):
                 val = 1
             else:
                 val = 0
+            eq_samples = db.session.query(Sample).filter(and_(Sample.wise_nose_id==new_samples_id[idx], Sample.id!=old_samples[idx].id)).all()
             setattr(old_samples[idx], "is_correct", val)
             setattr(old_samples[idx], "number_in_session", idx)     
+            setattr(old_samples[idx], "wise_nose_id", new_samples_id[idx])
+            for i in range(len(eq_samples)):
+                setattr(eq_samples[i], "is_correct", val)
         db.session.commit()
         flash('Session modified!', 'success')
         return redirect(url_for('sessions'))

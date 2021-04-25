@@ -644,7 +644,31 @@ img.picture{
 .sample{
     display: flex;
     flex-direction: row;
-    justify-content: flex-end;
+    align-items: center;
+}
+
+input.wise_nose_id_search{
+    height: calc(1.5em + .75rem + 2px);
+    border: 0;
+    border-bottom: 1px solid #B2B2B2;
+}
+
+input.wise_nose_id_search:focus{
+    border-color: black;
+    outline: 0;
+}
+
+.sample_and_search{
+    display: flex;
+    align-items: center;
+}
+
+.wise_nose_id_answers{
+    list-style-type: none;
+    height: 3.5rem;
+    padding: 0.25rem;
+    overflow-y: scroll;
+    box-shadow: 0.1rem 0.1rem 0.1rem rgba(0, 0, 0, 0.219), -0.1rem 0.1rem 0.1rem rgba(0, 0, 0, 0.219);
 }
 
 .sample p{
@@ -748,6 +772,7 @@ img.picture{
 
 .sample-container.execute .sample{
     justify-content: flex-start;
+    align-items: baseline;
 }
 
 .user.execute .row:nth-child(1), .user.execute .row:nth-child(2){
@@ -892,15 +917,17 @@ img.picture{
 }
 
 /** search bar **/ 
-@media(min-width:768px){
-    .search{
-        position: fixed;
-        top: 0.5rem;
-        right: 0;
-        z-index: 3000;
-    }
+
+.search{
+    position: fixed;
+    top: 0.5rem;
+    right: 0;
+    z-index: 3000;
 }
 
+.none{
+    display: none;
+}
 table {
   font-family: arial, sans-serif;
   border-collapse: collapse;

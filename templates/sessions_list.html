@@ -24,15 +24,15 @@
                                         <div class="col-md-4 date">
                                             <h3 class="text-uppercase">{{session.created.strftime("%A")}}</h3>
                                             <p class="date-format">{{session.created.strftime("%d/%m/%Y")}}</p>
-                                            <p class="time-location-format"><i class="fas fa-clock fa-sm"></i> {{session.created.strftime("%H:%M")}} - <i class="fas fa-map-marker fa-sm"></i> test4</p>
+                                            <p class="time-location-format"><i class="fas fa-clock fa-sm"></i> {{session.created.strftime("%H:%M")}}</p>
                                         </div>
                                         <div class="col-md-8">
                                             <div class="card-body">
                                                 <p class="card-text">Dog Name: {{session.dog.name}}</p>
                                                 <p class="card-text">Trainer Name: {{session.dog.trainer.name}}</p>
                                                 <div class="row pictures">
-                                                    <img class="picture" src="{{ url_for('static', filename='images/dog_try.jpg') }}" alt="">
-                                                    <img class="picture" src="{{ url_for('static', filename='images/member_try.jpg') }}" alt="">
+                                                    <img class="picture" src="{{ url_for('static', filename='images/' + session.dog.photo) }}" alt="">
+                                                    <img class="picture" src="{{ url_for('static', filename='images/' + session.dog.trainer.photo) }}" alt="">
                                                 </div>
                                                 {% if current_user.admin %}
                                                     <div class="row action-buttons-sessions">
@@ -58,15 +58,15 @@
                                         <div class="col-md-4 date">
                                             <h3 class="text-uppercase">{{session.completed.strftime("%a")}}</h3>
                                             <p class="date-format">{{session.completed.strftime("%d/%m/%Y")}}</p>
-                                            <p class="time-location-format"><i class="fas fa-clock fa-sm"></i> {{session.completed.strftime("%H:%M")}} - <i class="fas fa-map-marker fa-sm"></i> test4</p>
+                                            <p class="time-location-format"><i class="fas fa-clock fa-sm"></i> {{session.completed.strftime("%H:%M")}}</p>
                                         </div>
                                         <div class="col-md-8">
                                             <div class="card-body">
                                                 <p class="card-text">Dog Name: {{session.dog.name}}</p>
                                                 <p class="card-text">Trainer Name: {{session.dog.trainer.name}}</p>
                                                 <div class="row pictures">
-                                                    <img class="picture" src="{{ url_for('static', filename='images/dog_try.jpg') }}" alt="">
-                                                    <img class="picture" src="{{ url_for('static', filename='images/member_try.jpg') }}" alt="">
+                                                    <img class="picture" src="{{ url_for('static', filename='images/' + session.dog.photo) }}" alt="">
+                                                    <img class="picture" src="{{ url_for('static', filename='images/' + session.dog.trainer.photo) }}" alt="">
                                                 </div>
                                                 {% if current_user.admin %}
                                                     <div class="row action-buttons-sessions">
