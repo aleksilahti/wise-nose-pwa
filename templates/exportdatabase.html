@@ -7,9 +7,9 @@
     <h2 class="page-header">Export database to csv-files</h2>
     <br>
     <a class="list-group-item" href="{{ url_for('export_dogs') }}" >Dogs</a>
-    <a class="list-group-item" >Members</a>
-    <a class="list-group-item" >Sessions & samples</a>
+    <a class="list-group-item" href="{{ url_for('export_members') }}">Members</a>
+    <a class="list-group-item" href="{{ url_for('export_sessions') }}">Sessions & samples</a>
     <br>
-    <a type="button" href="{{ url_for('download_all_files')}}" class="btn btn-primary">Download all database</a>
+    <a type="button" href="{{ url_for('download_all_files')}}" class="btn btn-primary">Download all</a>
 </div>
 {% endblock %}

@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% block head %}
+{% endblock %}
+
+{% block body %}
+
+<div class="container">
+	<label for="start_date">Member name
+		<input type="date" id="start_date" placeholder="From" class="form-control form-control-lg" value={{search_data.start}}>
+	</label>
+    <label for="end_date">Member name
+		<input type="date" id="end_date" placeholder="To" class="form-control form-control-lg" value={{search_data.end}}>
+	</label>
+	<label for="dog">Dog
+		<select id="dog" class="form-control form-control-lg">
+			<option hidden selected value={{search_data.dog}}>{{search_data.dog}}</option>
+			{% for dog in dogs %}
+				<option>{{ dog.name }}</option>
+			{% endfor %}
+		</select>
+	</label>
+    <label for="supervisor">Supervisor
+		<select id="supervisor" class="form-control form-control-lg">
+			<option hidden selected value={{search_data.supervisor}}>{{search_data.supervisor}}</option>
+			{% for supervisor in supervisors %}
+				<option>{{ supervisor.name }}</option>
+			{% endfor %}
+		</select>
+	</label>
+
+	<br>
+	<a type="button" onclick="handleSearchSession()" class="btn btn-outline-info">Get search results</a>
+	<br><br>
+
+	<table>
+		<tr>
+			<th>Date</th>
+			<th>Dog</th>
+			<th>Supervisor</th>
+		</tr>
+			{% for session in sessions %}
+			<tr>
+				<td>{{ session.created }}</td>
+				<td>{{ session.dog.name }}</td>
+				<td>{{ session.supervisor.name }}</td>
+			</tr>
+			{% endfor %}
+	</table>
+
+	<br>
+	<a type="button" onclick="downloadSessionData()" class="btn btn-primary">Download</a>
+</div>
+{% endblock %}
