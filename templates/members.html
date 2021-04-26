@@ -9,12 +9,12 @@
     <input type="text" id="person_name" placeholder="Member name" class="form-control form-control-lg" value={{search_data.name}}>
 </label>
 <label for="role">Role
-<!--		<select id="role" class="form-control form-control-lg">-->
-<!--			<option hidden selected value={{search_data.role}}>{{search_data.role}}</option>-->
-<!--			{% for trainer in trainers %}-->
-<!--				<option>{{ trainer.name }}</option>-->
-<!--			{% endfor %}-->
-<!--		</select>-->
+<select id="role" class="form-control form-control-lg">
+      <option {%if search_data.role == "1"%}selected{%endif%} value="1">Trainer</option>
+      <option {%if search_data.role == "2"%}selected{%endif%}value="2">Supervisor</option>
+      <option {%if search_data.role == "3"%}selected{%endif%}
+      value="3">Trainer/Supervisor</option>
+</select>
     <input type="text" id="role" placeholder="Role" class="form-control form-control-lg" value={{search_data.role}}>
 </label>
 <label for="wise-nose-id">Wise Nose ID
