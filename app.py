@@ -193,7 +193,7 @@ def logout():
 @app.route("/dogs", methods=["GET", "POST"])
 def dogs():
     if current_user.is_authenticated:
-        dogs = Dog.query.all()
+        dogs = db.session.query(Dog).all()
         if request.method == "POST":
             search_data = request.data.decode('UTF-8')
             if search_data != '':
@@ -238,7 +238,7 @@ def add_dog():
     form = DogForm()
     form.header = 'Add new dog'
     form.trainer.choices = [(g.id, g.name) for g in
-                            Person.query.order_by('name').filter(or_(Person.role == 1, Person.role == 3))]
+                            db.session.query(Person).order_by('name').filter(or_(Person.role == 1, Person.role == 3))]
 
     form.submit.label.text = "Add new dog"
 
@@ -269,7 +269,7 @@ def edit_dog(id):
     form = DogForm()
     form.header = 'Edit dog'
     form.trainer.choices = [(g.id, g.name) for g in
-                            Person.query.order_by('name').filter(or_(Person.role == 1, Person.role == 3))]
+                            db.session.query(Person).order_by('name').filter(or_(Person.role == 1, Person.role == 3))]
     form.submit.label.text = "Save"
 
     if form.validate_on_submit():
@@ -318,7 +318,7 @@ def members():
         if request.method == "POST":
             search_data = request.data.decode('UTF-8')
             return redirect(url_for('search_members', data=search_data))
-        members = Person.query.all()
+        members = db.session.query(Person).all()
         empty_search_data = {'name': '', 'role': '', 'id': ''}
         return render_template('members.html', members=members, search_data=empty_search_data)
     return redirect(url_for('login'))
@@ -429,7 +429,7 @@ def samples():
 
 @app.route("/samples/<string:id>",methods=["GET", "POST"])
 def sample(id):
-    samples =  Sample.query.filter(Sample.wise_nose_id.contains(id)).distinct(Sample.wise_nose_id).group_by(Sample.wise_nose_id).all()
+    samples = db.session.query(Sample).filter(Sample.wise_nose_id.contains(id)).distinct(Sample.wise_nose_id).group_by(Sample.wise_nose_id).all()
     samples = [{sample.wise_nose_id: sample.is_correct} for sample in samples]
     return json.dumps(samples)
 
@@ -491,8 +491,8 @@ def session_info(id):
 def create_session():
     if current_user.is_authenticated:
         form = SessionForm()
-        form.dog.choices = [(g.id, g.name) for g in Dog.query.order_by('name')]
-        form.supervisor.choices = [(g.id, g.name) for g in Person.query.order_by('name').filter(or_(Person.role==2, Person.role==3))]
+        form.dog.choices = [(g.id, g.name) for g in db.session.query(Dog).order_by('name')]
+        form.supervisor.choices = [(g.id, g.name) for g in db.session.query(Person).order_by('name').filter(or_(Person.role==2, Person.role==3))]
         if form.validate_on_submit():
             session = Session(user_id=current_user.id, supervisor_id=form.supervisor.data, dog_id=form.dog.data, created=form.date.data, number_of_samples=form.number_of_samples.data)
             db.session.add(session)
@@ -565,7 +565,7 @@ def delete_session(id):
 def execute_session(id):
     if current_user.is_authenticated:
         samp = []
-        samples = Sample.query.filter_by(session_id=id).order_by("number_in_session").all()
+        samples = db.session.query(Sample).filter_by(session_id=id).order_by("number_in_session").all()
         if request.json:
             samples = db.session.query(Sample).filter_by(session_id=id).order_by("number_in_session").all()
             for idx in range(len(samples)):
@@ -580,7 +580,7 @@ def execute_session(id):
                     else:
                         tmp.append([s[0], -1])
                 samp.append(tmp)
-        session = Session.query.filter_by(id=id).first()
+        session = db.session.query(Session).filter_by(id=id).first()
         return render_template('session_execute.html', session=session, samples=samp)
     return redirect(url_for('login'))
 
@@ -588,11 +588,11 @@ def execute_session(id):
 def modify_session(id):
     if current_user.is_authenticated:
         form = SessionForm()
-        session = Session.query.filter_by(id=id).first()
-        samples = Sample.query.filter_by(session_id=session.id).all()
-        form.dog.choices = [(g.id, g.name) for g in Dog.query.order_by('name')]
+        session = db.session.query(Session).filter_by(id=id).first()
+        samples = db.session.query(Sample).filter_by(session_id=session.id).all()
+        form.dog.choices = [(g.id, g.name) for g in db.session.query(Dog).order_by('name')]
         form.dog.default = session.dog.id
-        form.supervisor.choices = [(g.id, g.name) for g in Person.query.order_by('name').filter(or_(Person.role==2, Person.role==3))]
+        form.supervisor.choices = [(g.id, g.name) for g in db.session.query(Person).order_by('name').filter(or_(Person.role==2, Person.role==3))]
         form.supervisor.default = session.supervisor.id
         return render_template('sessions_modify.html', session=session, samples=samples ,form=form)
     return redirect(url_for('login'))
