@@ -1,7 +1,7 @@
-function handleSearchSession() {
-    let data = getInputData();
+function handleSearchSession(url) {
+    let data = getSessionInputData();
 
-    fetch("/exportsessions", {
+    fetch(url, {
         method: "POST",
         body: JSON.stringify(data)
     })
@@ -12,10 +12,10 @@ function handleSearchSession() {
     })
 }
 
-function downloadSessionData() {
-    let data = getInputData();
+function downloadSessionData(url) {
+    let data = getSessionInputData();
 
-    fetch("/exportsessions/search", {
+    fetch(url, {
         method: "POST",
         body: JSON.stringify(data)
     })
@@ -26,7 +26,7 @@ function downloadSessionData() {
     })
 }
 
-function getInputData() {
+function getSessionInputData() {
     let start_date = document.getElementById("start_date").value;
     let end_date = document.getElementById("end_date").value;
 

@@ -5,6 +5,26 @@
 {% endblock %}
 
 {% block body %}
+<label for="dog-name">Dog name
+    <input type="text" id="dog-name" placeholder="Dog name" class="form-control form-control-lg" value={{search_data.name}}>
+</label>
+<label for="age">Age
+    <input type="text" id="age" placeholder="Age" style="width: 80px" class="form-control form-control-lg" value={{search_data.age}}>
+</label>
+<label for="wise-nose-id">Wise Nose ID
+    <input type="text" id="wise-nose-id" placeholder="Wise Nose ID" class="form-control form-control-lg" value={{search_data.id}}>
+</label>
+<label for="trainer-name">Trainer name
+    <select id="trainer-name" class="form-control form-control-lg">
+        <option hidden selected value={{search_data.trainer}}>{{search_data.trainer}}</option>
+        {% for trainer in trainers %}
+            <option>{{ trainer.name }}</option>
+        {% endfor %}
+    </select>
+</label>
+<a type="button" onclick="handleSearchDog('/dogs')" class="btn btn-outline-info search-button">Search</a>
+<br><br>
+
 <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 align-items-stretch">
     {% for dog in dogs %}
         <div class="col mb-4 dog-container">

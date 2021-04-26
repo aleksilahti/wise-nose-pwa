@@ -1,7 +1,7 @@
-function handleSearchMember() {
-    let data = getInputData();
+function handleSearchMember(url) {
+    let data = getMemberInputData();
 
-    fetch("/exportmembers", {
+    fetch(url, {
         method: "POST",
         body: JSON.stringify(data)
     })
@@ -12,10 +12,10 @@ function handleSearchMember() {
     })
 }
 
-function downloadMemberData() {
-    let data = getInputData();
+function downloadMemberData(url) {
+    let data = getMemberInputData();
 
-    fetch("/exportmembers/search", {
+    fetch(url, {
         method: "POST",
         body: JSON.stringify(data)
     })
@@ -26,7 +26,7 @@ function downloadMemberData() {
     })
 }
 
-function getInputData() {
+function getMemberInputData() {
     let person_name = document.getElementById("person_name").value;
     let role = document.getElementById("role").value;
     let wise_nose_id = document.getElementById("wise-nose-id").value;

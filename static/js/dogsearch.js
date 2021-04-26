@@ -1,7 +1,7 @@
-function handleSearchDog() {
+function handleSearchDog(url) {
     let data = getInputData();
 
-    fetch("/exportdogs", {
+    fetch(url, {
         method: "POST",
         body: JSON.stringify(data)
     })
@@ -12,10 +12,10 @@ function handleSearchDog() {
     })
 }
 
-function downloadDogsData() {
+function downloadDogsData(url) {
     let data = getInputData();
 
-    fetch("/exportdogs/search", {
+    fetch(url, {
         method: "POST",
         body: JSON.stringify(data)
     })

@@ -27,9 +27,7 @@
 			{% endfor %}
 		</select>
 	</label>
-
-	<br>
-	<a type="button" onclick="handleSearchSession()" class="btn btn-outline-info">Get search results</a>
+	<a type="button" onclick="handleSearchSession('/exportsessions')" class="btn btn-outline-info search-button">Search</a>
 	<br><br>
 
 	<table>
@@ -48,6 +46,6 @@
 	</table>
 
 	<br>
-	<a type="button" onclick="downloadSessionData()" class="btn btn-primary">Download</a>
+	<a type="button" onclick="downloadSessionData('/exportsessions/search')" class="btn btn-primary">Download</a>
 </div>
 {% endblock %}

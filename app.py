@@ -21,7 +21,7 @@ from flask_bcrypt import Bcrypt
 from flask_uploads import UploadSet, configure_uploads, IMAGES
 
 basedir = os.path.abspath(os.path.dirname(__file__))
-SECRET_KEY = os.urandom(32)
+SECRET_KEY = os.getenv('SECRET_KEY', None)
 app.config['SECRET_KEY'] = SECRET_KEY
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///test.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
@@ -198,17 +198,34 @@ def dogs():
             search_data = request.data.decode('UTF-8')
             if search_data != '':
                 session['dogs_search'] = search_data
-                return redirect(url_for('search_dogs', search_data=search_data))
-        return render_template('dogs.html', dogs=dogs)
+                return redirect(url_for('search_dogs', data=search_data))
+        trainers = db.session.query(Person).order_by('name').filter(or_(Person.role == 1, Person.role == 3)).all()
+        search_data = {'name': '', 'age': '', 'id': '', 'trainer': ''}
+        return render_template('dogs.html', dogs=dogs, trainers=trainers, search_data=search_data)
     return redirect(url_for('login'))
 
-@app.route('/dogs/search')
+@app.route('/dogs/search', methods=["GET"])
 def search_dogs():
-    search_data = request.args.get('search_data')
-    dogs_search = Dog.query.filter(Dog.name.contains(search_data)).all()
-    if len(dogs_search) == 0:
-        flash('Search result is empty')
-    return render_template("dogs.html", dogs=dogs_search)
+    if current_user.is_authenticated:
+        if request.method == "POST":
+            return redirect(url_for('download_dogs', data=request.data))
+
+        data = json.loads(request.args.get('data'))
+        dogs_search = get_dog_search_results(data)
+
+        if len(dogs_search) == 0:
+            flash('Search result is empty')
+
+        dog_name = data['dog_name']
+        dog_age = data['age']
+        trainer_name = data['trainer_name']
+        wise_nose_id = data['wise_nose_id']
+
+        trainers = db.session.query(Person).order_by('name').filter(or_(Person.role == 1, Person.role == 3)).all()
+        search_data = {'name': dog_name, 'age': dog_age, 'id': wise_nose_id, 'trainer': trainer_name}
+        return render_template("dogs.html", dogs=dogs_search, trainers=trainers, search_data=search_data)
+    return redirect(url_for('login'))
+
 
 @app.route("/dogs/<int:id>")
 def dog(id):
@@ -300,18 +317,28 @@ def members():
     if current_user.is_authenticated:
         if request.method == "POST":
             search_data = request.data.decode('UTF-8')
-            return redirect(url_for('search_members', search_data=search_data))
+            return redirect(url_for('search_members', data=search_data))
         members = Person.query.all()
-        return render_template('members.html', members=members)
+        empty_search_data = {'name': '', 'role': '', 'id': ''}
+        return render_template('members.html', members=members, search_data=empty_search_data)
     return redirect(url_for('login'))
 
-@app.route('/members/search')
+@app.route('/members/search', methods=["GET"])
 def search_members():
-    search_data = request.args.get('search_data')
-    members_search = Person.query.filter(Person.name.contains(search_data)).all()
-    if len(members_search) == 0:
-        flash('Search result is empty')
-    return render_template("members.html", members=members_search)
+    if current_user.is_authenticated:
+        data = json.loads(request.args.get('data'))
+        members_search = get_member_search_results(data)
+
+        if len(members_search) == 0:
+            flash('Search result is empty')
+
+        person_name = data['person_name']
+        role = data['role']
+        wise_nose_id = data['wise_nose_id']
+
+        search_data = {'name': person_name, 'role': role, 'id': wise_nose_id}
+        return render_template("members.html", members=members_search, search_data=search_data)
+    return redirect(url_for('login'))
 
 @app.route("/members/<int:id>")
 def member(id):
@@ -425,23 +452,35 @@ def sessions():
     if current_user.is_authenticated:
         if request.method == "POST":
             search_data = request.data.decode('UTF-8')
-            return redirect(url_for('search_sessions', search_data=search_data))
-        sessions = Session.query.all()
-        return render_template('sessions_list.html', sessions=sessions)
+            return redirect(url_for('search_sessions', data=search_data))
+
+        dogs = db.session.query(Dog).order_by('name').all()
+        supervisors = db.session.query(Person).order_by('name').filter(or_(Person.role == 2, Person.role == 3)).all()
+        sessions = db.session.query(Session).order_by('created')
+        empty_search_data = {'start': '', 'end': '', 'dog': '', "supervisor": ''}
+        return render_template('sessions_list.html', sessions=sessions, search_data=empty_search_data, dogs=dogs, supervisors=supervisors)
     return redirect(url_for('login'))
 
-@app.route('/sessions/search')
+@app.route('/sessions/search', methods=["GET"])
 def search_sessions():
-    search_data = request.args.get('search_data')
-    sessions_search = Session.query.filter(
-        or_(
-            Session.dog.name.contains(search_data),
-            Session.supervisor.name.contains(search_data)
-        )
-    ).all()
-    if len(sessions_search) == 0:
-        flash('Search result is empty')
-    return render_template("sessions_list.html", sessions=sessions_search)
+    if current_user.is_authenticated:
+        data = json.loads(request.args.get('data'))
+        sessions_search = get_session_search_results(data)
+
+        if len(sessions_search) == 0:
+            flash('Search result is empty')
+
+        start_date = data['start_date']
+        end_date = data['end_date']
+        dog_name = data['dog_name']
+        supervisor_name = data['supervisor_name']
+
+        dogs = db.session.query(Dog).order_by('name').all()
+        supervisors = db.session.query(Person).order_by('name').filter(or_(Person.role == 2, Person.role == 3)).all()
+
+        search_data = {'start': start_date, 'end': end_date, 'dog': dog_name, "supervisor":supervisor_name}
+        return render_template('sessions_list.html', sessions=sessions_search, search_data=search_data, dogs=dogs, supervisors=supervisors)
+    return redirect(url_for('login'))
 
 
 @app.route("/sessions/<int:id>")
@@ -842,7 +881,6 @@ def get_member_search_results(data):
 
 
 def get_session_search_results(data):
-    print(data)
     start_date = data['start_date']
     end_date = data['end_date']
     dog_name = data['dog_name']

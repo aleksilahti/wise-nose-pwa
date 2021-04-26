@@ -22,8 +22,7 @@
 			{% endfor %}
 		</select>
 	</label>
-	<br>
-	<a type="button" onclick="handleSearchDog()" class="btn btn-outline-info">Get search results</a>
+	<a type="button" onclick="handleSearchDog('/exportdogs')" class="btn btn-outline-info search-button">Search</a>
 	<br><br>
 
 	<table>
@@ -44,7 +43,7 @@
 	</table>
 
 	<br>
-	<a type="button" onclick="downloadDogsData()" class="btn btn-primary">Download</a>
+	<a type="button" onclick="downloadDogsData('/exportdogs/search')" class="btn btn-primary">Download</a>
 </div>
 
 {% endblock %}

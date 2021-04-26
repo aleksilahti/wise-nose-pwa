@@ -20,9 +20,7 @@
 	<label for="wise-nose-id">Wise Nose ID
     	<input type="text" id="wise-nose-id" placeholder="Wise Nose ID" class="form-control form-control-lg" value={{search_data.id}}>
 	</label>
-
-	<br>
-	<a type="button" onclick="handleSearchMember()" class="btn btn-outline-info">Get search results</a>
+	<a type="button" onclick="handleSearchMember('/exportmembers')" class="btn btn-outline-info search-button">Search</a>
 	<br><br>
 
 	<table>
@@ -41,6 +39,6 @@
 	</table>
 
 	<br>
-	<a type="button" onclick="downloadMemberData()" class="btn btn-primary">Download</a>
+	<a type="button" onclick="downloadMemberData('/exportmembers/search')" class="btn btn-primary">Download</a>
 </div>
 {% endblock %}
