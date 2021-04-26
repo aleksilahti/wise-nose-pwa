@@ -928,3 +928,28 @@ input.wise_nose_id_search:focus{
 .none{
     display: none;
 }
+table {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+td, th {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
+}
+
+tr:nth-child(even) {
+  background-color: #dddddd;
+}
+
+label {
+    margin: 0 15px 20px 0;
+}
+
+.search-button {
+    height: 48px;
+    margin: 0 0 5px 0;
+    padding: 10px;
+}

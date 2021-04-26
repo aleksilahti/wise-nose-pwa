@@ -5,6 +5,34 @@
 {% endblock %}
 
 {% block body %}
+<label for="start_date">Member name
+    <input type="date" id="start_date" placeholder="From" class="form-control form-control-lg" value={{search_data.start}}>
+</label>
+<label for="end_date">Member name
+    <input type="date" id="end_date" placeholder="To" class="form-control form-control-lg" value={{search_data.end}}>
+</label>
+<label for="dog">Dog
+    <select id="dog" class="form-control form-control-lg">
+        <option hidden selected value={{search_data.dog}}>{{search_data.dog}}</option>
+        {% for dog in dogs %}
+            <option>{{ dog.name }}</option>
+        {% endfor %}
+    </select>
+</label>
+<label for="supervisor">Supervisor
+    <select id="supervisor" class="form-control form-control-lg">
+        <option hidden selected value={{search_data.supervisor}}>{{search_data.supervisor}}</option>
+        {% for supervisor in supervisors %}
+            <option>{{ supervisor.name }}</option>
+        {% endfor %}
+    </select>
+</label>
+
+<a type="button" onclick="handleSearchSession('/sessions')" class="btn btn-outline-info search-button">Search</a>
+
+<br><br>
+
+
 <div class="row session">
     <div class="col sessions-tabs">
         <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
@@ -109,5 +137,4 @@
         </div>
     </div>         
 {% endfor%}
-
 {% endblock %}

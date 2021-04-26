@@ -1,5 +1,5 @@
 
-from operator import or_, and_
+from operator import or_
 from flask import Flask, render_template, redirect, request, url_for, flash, session, send_file
 import os
 import zipfile
@@ -8,8 +8,10 @@ from werkzeug.utils import secure_filename
 from datetime import datetime
 import json
 from sqlalchemy.ext.hybrid import hybrid_property
+from datetime import date
 
 app = Flask("Wise Nose PWA")
+from flask import session
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.engine import Engine
 from sqlalchemy import event, or_, and_
@@ -188,12 +190,42 @@ def logout():
     return redirect(url_for('login'))
 
 # Dog routes
-@app.route("/dogs")
+@app.route("/dogs", methods=["GET", "POST"])
 def dogs():
     if current_user.is_authenticated:
-        dogs = Dog.query.all()
-        return render_template('dogs.html', dogs=dogs)
+        dogs = db.session.query(Dog).all()
+        if request.method == "POST":
+            search_data = request.data.decode('UTF-8')
+            if search_data != '':
+                session['dogs_search'] = search_data
+                return redirect(url_for('search_dogs', data=search_data))
+        trainers = db.session.query(Person).order_by('name').filter(or_(Person.role == 1, Person.role == 3)).all()
+        search_data = {'name': '', 'age': '', 'id': '', 'trainer': ''}
+        return render_template('dogs.html', dogs=dogs, trainers=trainers, search_data=search_data)
     return redirect(url_for('login'))
+
+@app.route('/dogs/search', methods=["GET"])
+def search_dogs():
+    if current_user.is_authenticated:
+        if request.method == "POST":
+            return redirect(url_for('download_dogs', data=request.data))
+
+        data = json.loads(request.args.get('data'))
+        dogs_search = get_dog_search_results(data)
+
+        if len(dogs_search) == 0:
+            flash('Search result is empty')
+
+        dog_name = data['dog_name']
+        dog_age = data['age']
+        trainer_name = data['trainer_name']
+        wise_nose_id = data['wise_nose_id']
+
+        trainers = db.session.query(Person).order_by('name').filter(or_(Person.role == 1, Person.role == 3)).all()
+        search_data = {'name': dog_name, 'age': dog_age, 'id': wise_nose_id, 'trainer': trainer_name}
+        return render_template("dogs.html", dogs=dogs_search, trainers=trainers, search_data=search_data)
+    return redirect(url_for('login'))
+
 
 @app.route("/dogs/<int:id>")
 def dog(id):
@@ -206,7 +238,7 @@ def add_dog():
     form = DogForm()
     form.header = 'Add new dog'
     form.trainer.choices = [(g.id, g.name) for g in
-                            Person.query.order_by('name').filter(or_(Person.role == 1, Person.role == 3))]
+                            db.session.query(Person).order_by('name').filter(or_(Person.role == 1, Person.role == 3))]
 
     form.submit.label.text = "Add new dog"
 
@@ -237,7 +269,7 @@ def edit_dog(id):
     form = DogForm()
     form.header = 'Edit dog'
     form.trainer.choices = [(g.id, g.name) for g in
-                            Person.query.order_by('name').filter(or_(Person.role == 1, Person.role == 3))]
+                            db.session.query(Person).order_by('name').filter(or_(Person.role == 1, Person.role == 3))]
     form.submit.label.text = "Save"
 
     if form.validate_on_submit():
@@ -280,11 +312,32 @@ def delete_dog(id):
     return redirect(url_for('login'))
 
 # Member routes
-@app.route("/members")
+@app.route("/members", methods=["GET", "POST"])
 def members():
     if current_user.is_authenticated:
-        members = Person.query.all()
-        return render_template('members.html', members=members)
+        if request.method == "POST":
+            search_data = request.data.decode('UTF-8')
+            return redirect(url_for('search_members', data=search_data))
+        members = db.session.query(Person).all()
+        empty_search_data = {'name': '', 'role': '', 'id': ''}
+        return render_template('members.html', members=members, search_data=empty_search_data)
+    return redirect(url_for('login'))
+
+@app.route('/members/search', methods=["GET"])
+def search_members():
+    if current_user.is_authenticated:
+        data = json.loads(request.args.get('data'))
+        members_search = get_member_search_results(data)
+
+        if len(members_search) == 0:
+            flash('Search result is empty')
+
+        person_name = data['person_name']
+        role = data['role']
+        wise_nose_id = data['wise_nose_id']
+
+        search_data = {'name': person_name, 'role': role, 'id': wise_nose_id}
+        return render_template("members.html", members=members_search, search_data=search_data)
     return redirect(url_for('login'))
 
 @app.route("/members/<int:id>")
@@ -376,7 +429,7 @@ def samples():
 
 @app.route("/samples/<string:id>",methods=["GET", "POST"])
 def sample(id):
-    samples =  Sample.query.filter(Sample.wise_nose_id.contains(id)).distinct(Sample.wise_nose_id).group_by(Sample.wise_nose_id).all()
+    samples = db.session.query(Sample).filter(Sample.wise_nose_id.contains(id)).distinct(Sample.wise_nose_id).group_by(Sample.wise_nose_id).all()
     samples = [{sample.wise_nose_id: sample.is_correct} for sample in samples]
     return json.dumps(samples)
 
@@ -394,12 +447,41 @@ def delete_sample(id):
 
 
 # Sessions routes, create/edit/delete, execute/modify/review (success?)
-@app.route("/sessions")
+@app.route("/sessions", methods=["GET", "POST"])
 def sessions():
     if current_user.is_authenticated:
-        sessions = Session.query.all()
-        return render_template('sessions_list.html', sessions=sessions)
+        if request.method == "POST":
+            search_data = request.data.decode('UTF-8')
+            return redirect(url_for('search_sessions', data=search_data))
+
+        dogs = db.session.query(Dog).order_by('name').all()
+        supervisors = db.session.query(Person).order_by('name').filter(or_(Person.role == 2, Person.role == 3)).all()
+        sessions = db.session.query(Session).order_by('created')
+        empty_search_data = {'start': '', 'end': '', 'dog': '', "supervisor": ''}
+        return render_template('sessions_list.html', sessions=sessions, search_data=empty_search_data, dogs=dogs, supervisors=supervisors)
     return redirect(url_for('login'))
+
+@app.route('/sessions/search', methods=["GET"])
+def search_sessions():
+    if current_user.is_authenticated:
+        data = json.loads(request.args.get('data'))
+        sessions_search = get_session_search_results(data)
+
+        if len(sessions_search) == 0:
+            flash('Search result is empty')
+
+        start_date = data['start_date']
+        end_date = data['end_date']
+        dog_name = data['dog_name']
+        supervisor_name = data['supervisor_name']
+
+        dogs = db.session.query(Dog).order_by('name').all()
+        supervisors = db.session.query(Person).order_by('name').filter(or_(Person.role == 2, Person.role == 3)).all()
+
+        search_data = {'start': start_date, 'end': end_date, 'dog': dog_name, "supervisor":supervisor_name}
+        return render_template('sessions_list.html', sessions=sessions_search, search_data=search_data, dogs=dogs, supervisors=supervisors)
+    return redirect(url_for('login'))
+
 
 @app.route("/sessions/<int:id>")
 def session_info(id):
@@ -409,8 +491,8 @@ def session_info(id):
 def create_session():
     if current_user.is_authenticated:
         form = SessionForm()
-        form.dog.choices = [(g.id, g.name) for g in Dog.query.order_by('name')]
-        form.supervisor.choices = [(g.id, g.name) for g in Person.query.order_by('name').filter(or_(Person.role==2, Person.role==3))]
+        form.dog.choices = [(g.id, g.name) for g in db.session.query(Dog).order_by('name')]
+        form.supervisor.choices = [(g.id, g.name) for g in db.session.query(Person).order_by('name').filter(or_(Person.role==2, Person.role==3))]
         if form.validate_on_submit():
             session = Session(user_id=current_user.id, supervisor_id=form.supervisor.data, dog_id=form.dog.data, created=form.date.data, number_of_samples=form.number_of_samples.data)
             db.session.add(session)
@@ -483,7 +565,7 @@ def delete_session(id):
 def execute_session(id):
     if current_user.is_authenticated:
         samp = []
-        samples = Sample.query.filter_by(session_id=id).order_by("number_in_session").all()
+        samples = db.session.query(Sample).filter_by(session_id=id).order_by("number_in_session").all()
         if request.json:
             samples = db.session.query(Sample).filter_by(session_id=id).order_by("number_in_session").all()
             for idx in range(len(samples)):
@@ -498,7 +580,7 @@ def execute_session(id):
                     else:
                         tmp.append([s[0], -1])
                 samp.append(tmp)
-        session = Session.query.filter_by(id=id).first()
+        session = db.session.query(Session).filter_by(id=id).first()
         return render_template('session_execute.html', session=session, samples=samp)
     return redirect(url_for('login'))
 
@@ -506,12 +588,11 @@ def execute_session(id):
 def modify_session(id):
     if current_user.is_authenticated:
         form = SessionForm()
-        session = Session.query.filter_by(id=id).first()
-        print(session.number_of_samples)
-        samples = Sample.query.filter_by(session_id=session.id).all()
-        form.dog.choices = [(g.id, g.name) for g in Dog.query.order_by('name')]
+        session = db.session.query(Session).filter_by(id=id).first()
+        samples = db.session.query(Sample).filter_by(session_id=session.id).all()
+        form.dog.choices = [(g.id, g.name) for g in db.session.query(Dog).order_by('name')]
         form.dog.default = session.dog.id
-        form.supervisor.choices = [(g.id, g.name) for g in Person.query.order_by('name').filter(or_(Person.role==2, Person.role==3))]
+        form.supervisor.choices = [(g.id, g.name) for g in db.session.query(Person).order_by('name').filter(or_(Person.role==2, Person.role==3))]
         form.supervisor.default = session.supervisor.id
         return render_template('sessions_modify.html', session=session, samples=samples ,form=form)
     return redirect(url_for('login'))
@@ -532,6 +613,113 @@ def export():
     if current_user.is_authenticated:
         return render_template('exportdatabase.html')
     return redirect(url_for('login'))
+
+@app.route("/exportdogs", methods=["GET", "POST"])
+def export_dogs():
+    if current_user.is_authenticated:
+        dogs = db.session.query(Dog)
+        trainers = db.session.query(Person).order_by('name').filter(or_(Person.role == 1, Person.role == 3)).all()
+
+        if request.method == "POST":
+            return redirect(url_for('search_export_dogs', data=request.data))
+
+        empty_search_data = {'name': '', 'age':'', 'id':'', 'trainer':''}
+        return render_template('exportdogs.html', dogs=dogs, trainers=trainers, search_data=empty_search_data)
+    return redirect(url_for('login'))
+
+@app.route('/exportdogs/search', methods=["GET", "POST"])
+def search_export_dogs():
+    if current_user.is_authenticated:
+        if request.method == "POST":
+            return redirect(url_for('download_dogs', data=request.data))
+
+        data = json.loads(request.args.get('data'))
+        dogs_search = get_dog_search_results(data)
+
+        if len(dogs_search) == 0:
+            flash('Search result is empty')
+
+        dog_name = data['dog_name']
+        dog_age = data['age']
+        trainer_name = data['trainer_name']
+        wise_nose_id = data['wise_nose_id']
+
+        trainers = db.session.query(Person).order_by('name').filter(or_(Person.role == 1, Person.role == 3)).all()
+        search_data = {'name': dog_name, 'age': dog_age, 'id': wise_nose_id, 'trainer': trainer_name}
+        return render_template("exportdogs.html", dogs=dogs_search, trainers=trainers, search_data=search_data)
+    return redirect(url_for('login'))
+
+@app.route("/exportmembers", methods=["GET", "POST"])
+def export_members():
+    if current_user.is_authenticated:
+        members = db.session.query(Person)
+
+        if request.method == "POST":
+            return redirect(url_for('search_export_members', data=request.data))
+
+        empty_search_data = {'name': '', 'role':'', 'id':''}
+        return render_template('exportmembers.html', members=members, search_data=empty_search_data)
+    return redirect(url_for('login'))
+
+@app.route('/exportmembers/search', methods=["GET", "POST"])
+def search_export_members():
+    if current_user.is_authenticated:
+        if request.method == "POST":
+            return redirect(url_for('download_members', data=request.data))
+
+        data = json.loads(request.args.get('data'))
+        members_search = get_member_search_results(data)
+
+        if len(members_search) == 0:
+            flash('Search result is empty')
+
+        person_name = data['person_name']
+        role = data['role']
+        wise_nose_id = data['wise_nose_id']
+
+        search_data = {'name': person_name, 'role': role, 'id': wise_nose_id}
+        return render_template("exportmembers.html", members=members_search, search_data=search_data)
+    return redirect(url_for('login'))
+
+
+@app.route("/exportsessions", methods=["GET", "POST"])
+def export_sessions():
+    if current_user.is_authenticated:
+        if request.method == "POST":
+            return redirect(url_for('search_export_sessions', data=request.data))
+
+        sessions = db.session.query(Session).order_by('completed').all()
+        dogs = db.session.query(Dog).order_by('name').all()
+        supervisors = db.session.query(Person).order_by('name').filter(or_(Person.role == 2, Person.role == 3)).all()
+        empty_search_data = {'start': '', 'end': '', 'dog': '', "supervisor": ''}
+        return render_template("exportsessions.html", dogs=dogs, supervisors=supervisors, sessions=sessions, search_data=empty_search_data)
+    return redirect(url_for('login'))
+
+
+@app.route('/exportsessions/search', methods=["GET", "POST"])
+def search_export_sessions():
+    if current_user.is_authenticated:
+        if request.method == "POST":
+            return redirect(url_for('download_sessions', data=request.data))
+
+        data = json.loads(request.args.get('data'))
+        sessions_search = get_session_search_results(data)
+
+        if len(sessions_search) == 0:
+            flash('Search result is empty')
+
+        start_date = data['start_date']
+        end_date = data['end_date']
+        dog_name = data['dog_name']
+        supervisor_name = data['supervisor_name']
+
+        dogs = db.session.query(Dog).order_by('name').all()
+        supervisors = db.session.query(Person).order_by('name').filter(or_(Person.role == 2, Person.role == 3)).all()
+        search_data = {'start': start_date, 'end': end_date, 'dog': dog_name, "supervisor":supervisor_name}
+        return render_template("exportsessions.html", dogs=dogs, supervisors=supervisors, sessions=sessions_search, search_data=search_data)
+    return redirect(url_for('login'))
+
+
 
 @app.route("/users")
 def users():
@@ -655,19 +843,151 @@ def contact():
     return render_template('contact.html', form=form)
 
 
+def get_dog_search_results(data):
+    trainer_name = data['trainer_name']
+    dog_name = data['dog_name']
+    dog_age = data['age']
+    wise_nose_id = data['wise_nose_id']
+
+    dogs = db.session.query(Dog)
+    if dog_name != '':
+        dogs = dogs.filter(Dog.name.contains(dog_name))
+    if dog_age != '':
+        dogs = dogs.filter_by(age=dog_age)
+    if wise_nose_id != '':
+        dogs = dogs.filter_by(wise_nose_id=wise_nose_id)
+    if trainer_name != '':
+        trainer = db.session.query(Person).filter(Person.name == trainer_name).all()
+        if len(trainer) != 0:
+            dogs = dogs.filter_by(trainer_id=trainer[0].id)
+
+    return dogs.all()
+
+
+def get_member_search_results(data):
+    person_name = data['person_name']
+    role = data['role']
+    wise_nose_id = data['wise_nose_id']
+
+    members = db.session.query(Person)
+    if person_name != '':
+        members = members.filter(Person.name.contains(person_name))
+    if role != '':
+        members = members.filter_by(role=role)
+    if wise_nose_id != '':
+        members = members.filter_by(wise_nose_id=wise_nose_id)
+
+    return members.all()
+
+
+def get_session_search_results(data):
+    start_date = data['start_date']
+    end_date = data['end_date']
+    dog_name = data['dog_name']
+    supervisor_name = data['supervisor_name']
+
+    sessions_result = db.session.query(Session)
+
+    if start_date != '':
+        try:
+            year = int(start_date[:4])
+            month = int(start_date[5:7])
+            day = int(start_date[8:])
+            s_date = date(year=year, month=month, day=day)
+            sessions_result = sessions_result.filter(Session.created > s_date)
+        except ValueError:
+            return []
+    if end_date != '':
+        try:
+            year = int(end_date[:4])
+            month = int(end_date[5:7])
+            day = int(end_date[8:])
+            e_date = date(year=year, month=month, day=day)
+            sessions_result = sessions_result.filter(Session.created < e_date)
+        except ValueError:
+            return []
+    if dog_name != '':
+        dog = db.session.query(Dog).filter(Dog.name == dog_name).all()
+        if len(dog) != 0:
+            sessions_result = sessions_result.filter_by(dog_id=dog[0].id)
+    if supervisor_name != '':
+        supervisor = db.session.query(Person).filter(Person.name == supervisor_name).all()
+        if len(supervisor) != 0:
+            sessions_result = sessions_result.filter_by(supervisor_id=supervisor[0].id)
+
+    return sessions_result.order_by('created').all()
+
+
+def get_samples_by_sessions(sessions):
+    samples = []
+
+    for session in sessions:
+        [samples.append(i) for i in db.session.query(Sample).filter_by(session_id=session.id).all()]
+
+    return samples
+
 # Database -> csv
 @app.route("/database/export", methods=["GET"])
 def download_all_files():
     if current_user.is_authenticated:
-        create_csv(Dog.query.all(), "dogs.csv")
-        create_csv(Session.query.all(), "sessions.csv")
-        create_csv(Sample.query.all(), "samples.csv")
-        create_csv(Person.query.all(), "people.csv")
+        create_csv(db.session.query(Dog).all(), "dogs.csv")
+        create_csv(db.session.query(Session).all(), "sessions.csv")
+        create_csv(db.session.query(Sample).all(), "samples.csv")
+        create_csv(db.session.query(Person).all(), "people.csv")
 
         zipf = zipfile.ZipFile('data.zip', 'w', zipfile.ZIP_DEFLATED)
         for root, dirs, files in os.walk('data/'):
             for file in files:
                 zipf.write('data/' + file)
+        zipf.close()
+        return send_file('data.zip',
+                         mimetype='zip',
+                         attachment_filename='data.zip',
+                         as_attachment=True)
+    return redirect(url_for('login'))
+
+@app.route("/database/export/dogs", methods=["GET"])
+def download_dogs():
+    if current_user.is_authenticated:
+        data = json.loads(request.args.get('data'))
+        create_csv(get_dog_search_results(data), "dogs.csv")
+
+        zipf = zipfile.ZipFile('data.zip', 'w', zipfile.ZIP_DEFLATED)
+        zipf.write('data/dogs.csv')
+        zipf.close()
+        return send_file('data.zip',
+                         mimetype='zip',
+                         attachment_filename='data.zip',
+                         as_attachment=True)
+    return redirect(url_for('login'))
+
+@app.route("/database/export/members", methods=["GET"])
+def download_members():
+    if current_user.is_authenticated:
+        data = json.loads(request.args.get('data'))
+        create_csv(get_member_search_results(data), "people.csv")
+
+        zipf = zipfile.ZipFile('data.zip', 'w', zipfile.ZIP_DEFLATED)
+        zipf.write('data/people.csv')
+        zipf.close()
+        return send_file('data.zip',
+                         mimetype='zip',
+                         attachment_filename='data.zip',
+                         as_attachment=True)
+    return redirect(url_for('login'))
+
+
+@app.route("/database/export/sessions", methods=["GET"])
+def download_sessions():
+    if current_user.is_authenticated:
+        data = json.loads(request.args.get('data'))
+        sessions = get_session_search_results(data)
+        create_csv(sessions, "sessions.csv")
+        create_csv(get_samples_by_sessions(sessions), "samples.csv")
+
+        zipf = zipfile.ZipFile('data.zip', 'w', zipfile.ZIP_DEFLATED)
+        zipf.write('data/sessions.csv')
+        zipf.write('data/samples.csv')
         zipf.close()
         return send_file('data.zip',
                          mimetype='zip',
@@ -689,7 +1009,6 @@ def create_csv(data, file_basename):
 
     # write values to the csv-file
     for row in json_data:
-        print(row.values())
         w_file.write(", ".join([str(j) for j in row.values()]) + '\n')
 
     w_file.close()

@@ -26,14 +26,7 @@
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
-      <div class="col-5 col-md-3 col-lg-2 search">
-        <div class="input-group mb-2">
-          <input type="text" class="form-control" id="search" placeholder="Search">
-          <div class="input-group-append">
-            <button class="input-group-text"><i class="fas fa-search"></i></button>
-          </div>
-        </div>
-      </div>
+
       <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
         <h2>Wise Nose</h2>
         <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
@@ -99,5 +92,9 @@
     {% block script %}
     {% endblock %}
     <script src="{{ url_for('static', filename='js/functionalities.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/search.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/dogsearch.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/membersearch.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/sessionsearch.js') }}"></script>
   </body>
 </html>

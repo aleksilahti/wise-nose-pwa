@@ -5,6 +5,25 @@
 {% endblock %}
 
 {% block body %}
+<label for="person_name">Member name
+    <input type="text" id="person_name" placeholder="Member name" class="form-control form-control-lg" value={{search_data.name}}>
+</label>
+<label for="role">Role
+<select id="role" class="form-control form-control-lg">
+      <option {%if search_data.role == "1"%}selected{%endif%} value="1">Trainer</option>
+      <option {%if search_data.role == "2"%}selected{%endif%} value="2">Supervisor</option>
+      <option {%if search_data.role == "3"%}selected{%endif%}
+      value="3">Trainer/Supervisor</option>
+</select>
+</label>
+<label for="wise-nose-id">Wise Nose ID
+    <input type="text" id="wise-nose-id" placeholder="Wise Nose ID" class="form-control form-control-lg" value={{search_data.id}}>
+</label>
+
+<a type="button" onclick="handleSearchMember('/members')" class="btn btn-outline-info search-button">Search</a>
+<br><br>
+
+
   <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 align-items-stretch">
     {% for member in members %}
       <div class="col mb-4 member-container">
