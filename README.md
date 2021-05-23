@@ -13,3 +13,6 @@ python3 app.py
 ### Ran app in production mode
 flask run
 
+### Default credentials
+Username: *admin* \
+Password: *admin*
